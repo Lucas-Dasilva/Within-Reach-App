@@ -1,0 +1,152 @@
+body {
+  background-image: linear-gradient(-180deg, #060225 , #0F0340);
+  padding: 0px;
+  font-family: Tahoma;
+  text-align: left;
+
+}
+
+.tagMargin{
+  margin-bottom: .1em;
+}
+.userItem{
+  color:#FF3366;
+}
+.postlabel{
+  color:#FF3366;
+}
+.navitem{
+  color: #fff;
+  text-shadow: 2px 4px 20px #924DF9;
+}
+.sort{
+  color:#FF3366;
+}
+.tagItem{
+  border: 1px solid #FF3366;
+  padding: .1em;
+}
+textarea{
+  width: 30em;
+  height: 10em;
+}
+#submit.button{
+  size: 1em;
+}
+.title{
+  padding-left: .25em;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+}
+.flash-container {
+  text-align: center;
+  padding: 15px;
+  margin-left: 50em;
+  margin-right: 50em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background-color:#dff0d8;
+  color: #3c763d;
+  font-size: 16px;
+
+}
+.nav-container {
+  padding-top: 1em;
+  font-family: 'Dosis', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  height: 32px;
+  text-transform: uppercase;
+}
+a{
+  text-decoration: none;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+}
+a:hover {
+  color:#FF3366;
+  text-decoration: underline;
+}
+
+.button {
+  width : 65px;
+  padding : 3px;    
+  font-size: 16px;
+  margin : 5px;
+  padding : 5px;
+  border: 1px solid lightgray;
+}
+.button:hover {
+  background-color: #FF3366;
+  ;
+  color: white;
+}
+
+
+.likecount{
+  margin-left: 1.23em;
+  font-weight: bold;
+}
+
+.likeImg{
+  padding: .5em;
+}
+.levelImg{
+  padding: 1em;
+}
+
+.posttitle {
+  color:#FF3366;
+  border-radius: 1em;
+  padding: .1em;
+  font-family: 'Dosis', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.posttable {
+  margin-top: 1em;
+  color:#8C3EFF; 
+  border-radius: 1em;
+  background-color:#0E0240; 
+}
+.postbody{
+  font-size: 16px;
+  padding:.5em;
+  margin-bottom: 2em;
+}
+.posttime{
+  font-size: 12px;
+  padding: .5em;
+}
+.postlist{
+  display: flex;
+  flex-wrap: wrap;
+}
+.post-box{
+  display: flex;
+  vertical-align: middle;
+
+
+}
+@media screen and (min-width: 1200px) {
+  .post-box{
+      width: 32%;
+  } 
+}
+@media screen and (min-width: 800px) and (max-width:1200px){
+  .post-box{
+      width: 48%;
+  } 
+}
+
+@media screen and (max-width:800px){
+  .post-box{
+      width: 99%;
+  } 
+}
+
+
+

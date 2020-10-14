@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1 class= "title">Welcome to Yeet Nah!</h1>
+    <h2 class= "title">Number of Yeets: {{yeetcount}} </h2>
+    {% if sortform %}
+        <form action ="" method = 'POST'> 
+            
+            <div class ="sort">     
+                {{sortform.sort.label}}
+                {{ sortform.sort }}
+                {{ sortform.submit(class="button")}}
+            </div>
+        </form>
+    {% endif %}
+
+    <div class = "postlist">{% for post in posts %}
+        <div class="post-box">{% include '_post.html' %} </div>
+    {% endfor %}
+    </div>
+    
+{% endblock %}

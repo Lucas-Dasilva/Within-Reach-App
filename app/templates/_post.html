@@ -1,0 +1,26 @@
+<div>
+  <table class = "posttable">
+          <tr> 
+              <td colspan="3"><div class="posttitle"> {{post.title}} </div>
+              </td>
+          </tr>
+          <tr>
+  
+              <td class ="postbody" width= "80%">
+                  <!--  (milestone 1) TODO: include post body -->  
+                  <div class="postbody">{{post.body}}</div>
+                  <br>
+                  <div class="posttime">Posted at: {{ moment(post.timestamp).format('LLL')}}</div>
+              </td> 
+  
+              <td class ="likeImg" width = "5%">
+                  <a href="{{ url_for('addLike',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                  <br>
+                  <div class="likecount">{{post.likes}}</div>
+                  <a href="{{ url_for('subLike',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+              </td>
+             
+          </tr>
+
+      </table>
+  </div>

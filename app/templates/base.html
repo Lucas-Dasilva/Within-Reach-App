@@ -1,0 +1,36 @@
+<html>
+    <head >
+        {{ moment.include_jquery() }}
+        {{ moment.include_moment() }}
+
+       {% if title %}
+          <title>{{ title }} - Yeet Nah </title>
+       {% else %}
+          <title> Welcome to Yeet Nah! </title>
+       {% endif %}
+       <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    </head>
+
+    <body>
+        <div class ="nav-container">
+        <table>
+            <tr>
+                <td><a href="{{ url_for('index') }}" class = "button">Home</a></td>
+                <td><a href="{{ url_for('createpost') }}" class = "button"> Create Post </a></td>
+            </tr>
+        </table>
+        </div>
+        <div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class ="flash-container"> {{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {% block content %} {% endblock %}
+        </div>
+
+    </body>
+</html>
