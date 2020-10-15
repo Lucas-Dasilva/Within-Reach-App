@@ -12,4 +12,6 @@ from app import routes, models, errors
 
 from flask_moment import Moment
 
+
 moment = Moment(app)
+
