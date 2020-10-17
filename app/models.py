@@ -8,4 +8,6 @@ class Post(db.Model):
     body = db.Column(db.String(1500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
-    
+    latitude = db.Column(db.String(1500))
+    longitude = db.Column(db.String(1500))
+    distance = db.Column(db.Float, default = 0)

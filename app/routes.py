@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_sqlalchemy import sqlalchemy
+from math import sin,cos, sqrt, atan2, radians
 
 from app import app, db
 from app.forms import PostForm, SortForm
@@ -13,19 +14,32 @@ import requests, json
 @app.before_first_request
 def initDB(*args, **kwargs):
     db.create_all()
-    
+
 
 @app.route('/postsmile', methods=['GET', 'POST'])
 def createpost():
+    #Get Coordinates
+    Token_Key ='b69bdc8d2dd7a2c4a172c84dd4f619bf'
+    Ip_Address = '98.146.194.55'
+    url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Address,key= Token_Key)
+    headers = {'Content-Type': 'application/json'}
+    response = requests.get(url, headers)
+    parsed_json = (json.loads(response.text))
+
+    prelatitude =  parsed_json["latitude"]
+    prelongitude = parsed_json["longitude"]
+    print ("Latitude: " + str(prelatitude) +"\nLongitude: "+ str(prelongitude))
+    
     tempPost = PostForm()
     if tempPost.validate_on_submit():
         if (tempPost.body.data is not None):
-            newpost = Post(body = tempPost.body.data)
+            newpost = Post(body = tempPost.body.data, latitude = prelatitude,longitude = prelongitude)
             db.session.add(newpost)
             db.session.commit()
             flash('New Post created!')
             return redirect(url_for('index'))
     return render_template('create.html', form = tempPost)
+
 
 @app.route('/yeet/<post_id>', methods=['GET'])
 def addLike(post_id):
@@ -51,34 +65,16 @@ def delete(post_id):
     db.session.commit()
     return redirect(url_for('index', thepost = thepost))
 
-@app.route('/location')
-def getIpLocation():
-    Token_Key ='b69bdc8d2dd7a2c4a172c84dd4f619bf'
-    print("UserIP2",request.remote_addr)
-    headers_list = request.headers.getlist("X-Forwarded-For")
-    user_ip = headers_list[0] if headers_list else request.remote_addr
-    print("UserIp: ",user_ip)
-    #url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Adress,key= Token_Key)
-    #headers = {'Content-Type': 'application/json'}
-    #response = requests.get(url, headers)
-
-    #print('Request = ', response)
-    #print('**********************')
-    #print(response.text)
-    #parsed_json = (json.loads(response.text))
-    #latitude =  parsed_json["latitude"]
-    #longitude = parsed_json["longitude"]
-    #print ("Latitude: " + str(latitude) +"\nLongitude: "+ str(longitude))
-    #print(json.dumps(parsed_json, indent=4, sort_keys=True))
-
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    #yeetcount is number of posts
     yeetcount = Post.query.count()
     sortForm = SortForm()
+    
+    
     if request.method == 'POST':
         option = int(sortForm.sort.data)
-        print("sort integer value", option)  
 
         if (option == 1):
             posts = Post.query.order_by(Post.likes.desc())
@@ -86,7 +82,34 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    return render_template('index.html', title="Smile Portal", posts=posts.all(), yeetcount =  posts.count(), sortform = sortForm)
+    return render_template('index.html', title="Smile Portal", posts= Post.query.filter(Post.distance >= 20), yeetcount =  posts.count(), sortform = sortForm)
+
+@app.route('/distance/<post_id>', methods=['GET', 'POST'])
+def calc_dist(post_id):
+    #Radius of earth in miles
+    R = 3958.8
+    post = Post.query.get(post_id)
+
+    lat1 = radians(float(post.latitude))
+    lon1 = radians(float(post.longitude))
+    lat2 = radians(37.773972)
+    lon2 = radians(-122.431297)
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+
+    #add distance to the db colummn, in order to sort it out
+    post.distance = distance
+    db.session.commit()
+    print("Result:", distance, "Miles")
+    
+    return render_template('index.html')
 
 
 
+ 
