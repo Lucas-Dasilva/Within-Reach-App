@@ -8,3 +8,4 @@ class Post(db.Model):
     body = db.Column(db.String(1500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
+    

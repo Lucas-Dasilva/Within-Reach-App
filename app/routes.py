@@ -51,17 +51,25 @@ def delete(post_id):
     db.session.commit()
     return redirect(url_for('index', thepost = thepost))
 
-@app.route('/')
-def getIpLocation(Ip_Adress, Token_Key):
-    url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Adress,key= Token_Key)
-    headers = {'Content-Type': 'application/json'}
-    response = requests.get(url, headers)
+@app.route('/location')
+def getIpLocation():
+    Token_Key ='b69bdc8d2dd7a2c4a172c84dd4f619bf'
+    print("UserIP2",request.remote_addr)
+    headers_list = request.headers.getlist("X-Forwarded-For")
+    user_ip = headers_list[0] if headers_list else request.remote_addr
+    print("UserIp: ",user_ip)
+    #url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Adress,key= Token_Key)
+    #headers = {'Content-Type': 'application/json'}
+    #response = requests.get(url, headers)
 
-    print('Request = ', response)
-    print('**********************')
+    #print('Request = ', response)
+    #print('**********************')
     #print(response.text)
-    parsed_json = (json.loads(response.text))
-    print(json.dumps(parsed_json, indent=4, sort_keys=True))
+    #parsed_json = (json.loads(response.text))
+    #latitude =  parsed_json["latitude"]
+    #longitude = parsed_json["longitude"]
+    #print ("Latitude: " + str(latitude) +"\nLongitude: "+ str(longitude))
+    #print(json.dumps(parsed_json, indent=4, sort_keys=True))
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
