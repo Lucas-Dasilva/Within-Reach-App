@@ -1,0 +1,33 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1 class="title">Reply to Post</h1>
+    <br>
+
+    {% if post %}
+  
+        <div class="post-box">{% include '_post.html' %} </div>
+
+    {% endif %}
+
+    
+    {% if form %}
+
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <div class = "postlabel">
+                {{ form.body.label }}<br>
+                <div class = "postmessage"></div>{{ form.body}}
+            </div>
+            <div>
+            {{ form.submit(class="button") }}
+            </div>
+        </form>
+    {% endif %}
+    {% if %}
+    <div class = "postlist">{% for reply in replys %} </div>
+        <div class="post-box">{% include '_reply.html' %} </div>
+    {% endfor %}
+{% endblock %}

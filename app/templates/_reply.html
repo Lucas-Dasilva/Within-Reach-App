@@ -1,0 +1,23 @@
+
+<div>
+    <table class = "posttable">
+            <tr>
+    
+                <td class ="postbody" width= "80%">
+                    <!--  (milestone 1) TODO: include post body -->  
+                    <div class="postbody">{{reply.body}}</div>
+                    <br>
+                    <div class="posttime">Posted at: {{ moment(reply.timestamp).format('LLL')}}</div>
+                </td>
+                <td class ="likeImg" width = "5%">
+                    <a href="{{ url_for('addLike',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                    <br>
+                    <div class="likecount">{{reply.likes}}</div>
+                    <a href="{{ url_for('disLike',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                    <br>
+                </td>
+               
+            </tr>
+  
+        </table>
+    </div>
