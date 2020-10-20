@@ -14,6 +14,7 @@ import requests, json
 @app.before_first_request
 def initDB(*args, **kwargs):
     db.create_all()
+   
 
 #Main home page: Sorts, only displays nearby posts
 @app.route('/', methods=['GET', 'POST'])
@@ -86,7 +87,7 @@ def calc_dist(post_id):
 def ipToLocation():
     #Get Coordinates
     Token_Key ='b69bdc8d2dd7a2c4a172c84dd4f619bf'
-    Ip_Address = '98.146.194.55'
+    #Ip_Address = remote_addr
     url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Address,key= Token_Key)
     headers = {'Content-Type': 'application/json'}
     response = requests.get(url, headers)

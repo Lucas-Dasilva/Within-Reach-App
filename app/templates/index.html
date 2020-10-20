@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <button id="find-me">Show my location</button><br/>
+    <p id="status"></p>
+    <a id="map-link" target="_blank"></a>
+    <script type="text/javascript" src="static/location.js"></script>
+
+
 
     <h1 class= "title">Welcome to Yeet Nah!</h1>
     <h2 class= "title">Number of Yeets: {{yeetcount}} </h2>
