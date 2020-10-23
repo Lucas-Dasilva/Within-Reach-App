@@ -17,8 +17,8 @@ function geoFindMe() {
     obj.longitude = longitude;
     var locationString= JSON.stringify(obj);
     status.textContent = '';
-    mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
     mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    console.log(typeof(locationString));
     callAjax(locationString);
   }
 
@@ -35,17 +35,21 @@ function geoFindMe() {
   }
 
   function callAjax(location){
+    console.log("What it looks like:", location);
     jQuery.ajax({ 
-         url: '/index', 
-         type: 'POST', 
-         contentType: 'application/json',
-         data: location,
-         dataType: 'json',
-         timeout: 5000,
-         success: function(location) { 
-          drawChart(location);
-       }
-    })
+      url: '/location', 
+      type: "POST", 
+      contentType: "application/json",
+      data: location,
+      dataType: "text",
+      timeout: 5000,
+      success: function() { 
+        alert('Location was sent Susscefully!')
+      },
+      error:function(){
+        alert('error saving location')
+      }
+    });
   }
 }
 

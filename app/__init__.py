@@ -7,6 +7,8 @@ app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
+#Secret key for sessions
+app.secret_key = "hello"
 
 from app import routes, models, errors
 

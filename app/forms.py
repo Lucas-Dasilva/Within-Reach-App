@@ -15,7 +15,6 @@ class PostForm(FlaskForm):
     body = TextAreaField('Body', [validators.required(), validators.length(min = 1, max = 1500, message = "(0-1500 characters)")])
     submit = SubmitField('Post')
 
-
 class ReplyForm(FlaskForm):
     body = TextAreaField('Body', [validators.required(), validators.length(min = 1, max = 1500, message = "(0-1500 characters)")])
     submit = SubmitField('Post')

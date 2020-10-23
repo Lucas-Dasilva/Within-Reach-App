@@ -1,7 +1,7 @@
 from __future__ import print_function
 import sys
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from flask_sqlalchemy import sqlalchemy
 from math import sin,cos, sqrt, atan2, radians
 
@@ -11,10 +11,19 @@ from app.models import Post, Reply
 import requests, json
 
 
+
 @app.before_first_request
 def initDB(*args, **kwargs):
     db.create_all()
    
+@app.route("/location", methods = ['POST'])
+def locationHandler():
+    if request.method == 'POST':
+        location = request.get_json()
+    session['latitude'] = location['latitude']
+    session['longitude'] = location['longitude']    
+
+    return ("Everythings fine", 200)
 
 #Main home page: Sorts, only displays nearby posts
 @app.route('/', methods=['GET', 'POST'])
@@ -23,9 +32,13 @@ def index():
     #yeetcount is number of posts
     yeetcount = Post.query.count()
     sortForm = SortForm()
-
+    for post in Post.query.all():
+        calc_dist(post.id)
+            
+  
     if request.method == 'POST':
-        option = int(sortForm.sort.data)
+        option = 1
+        #option = int(sortForm.sort.data)
         print("option:", option)
 
         if (option == 1):
@@ -34,39 +47,36 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    return render_template('index.html', title="Welcome To Yeet Nah", posts= Post.query.filter(Post.distance <= 20), yeetcount =  posts.count(), sortform = sortForm)
+    return render_template('index.html', title="Welcome To Yeet Nah", posts= posts, yeetcount =  posts.count(), sortform = sortForm)
 
 #Create Post: Creates new post
 @app.route('/postsmile', methods=['GET', 'POST'])
 def createpost():
-    #Get json from ipTolocation function
-    parsed_json = ipToLocation()
-    prelatitude =  parsed_json["latitude"]
-    prelongitude = parsed_json["longitude"]
-    #print ("Latitude: " + str(prelatitude) +"\nLongitude: "+ str(prelongitude))
     
     tempPost = PostForm()
     if tempPost.validate_on_submit():
         if (tempPost.body.data is not None):
-            newpost = Post(body = tempPost.body.data, latitude = prelatitude,longitude = prelongitude)
+            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'])
             db.session.add(newpost)
             db.session.commit()
-            #Send to calc_dist with new post that has coordniates attached to it
-            calc_dist(newpost.id)
+            yeetcount = Post.query.count()            
             flash('New Post created!')
             return redirect(url_for('index'))
     return render_template('create.html', form = tempPost)
 
 #Calculate Distance of user to other posts 
 def calc_dist(post_id):
+    post_id_str = str(post_id)
     #Radius of earth in miles
     R = 3958.8
     post = Post.query.get(post_id)
 
+    #Posts locations
     lat1 = radians(float(post.latitude))
     lon1 = radians(float(post.longitude))
-    lat2 = radians(46.7314)
-    lon2 = radians(-117.1733)
+    #Users location coordinates with session
+    lat2 = radians(session['latitude'])
+    lon2 = radians(session['longitude'])
 
     dlon = lon2 - lon1
     dlat = lat2 - lat1
@@ -76,23 +86,11 @@ def calc_dist(post_id):
 
     distance = R * c
 
+    session[post_id_str] = distance
     #add distance to the db colummn, in order to sort it out
-    post.distance = distance
-    db.session.commit()
-    print("Result:", distance, "Miles")
-    
+    print(session[post_id_str])
     return render_template('index.html')
 
-#Gets ip address of user and returns json with location information
-def ipToLocation():
-    #Get Coordinates
-    Token_Key ='b69bdc8d2dd7a2c4a172c84dd4f619bf'
-    #Ip_Address = remote_addr
-    url = 'http://api.ipstack.com/{ip}?access_key={key}'.format(ip= Ip_Address,key= Token_Key)
-    headers = {'Content-Type': 'application/json'}
-    response = requests.get(url, headers)
-    parsed_json = (json.loads(response.text))
-    return parsed_json
 
 #Allows user to like posts
 @app.route('/yeet/<post_id>', methods=['GET'])
@@ -120,7 +118,7 @@ def comments(post_id):
     form = ReplyForm()
     if form.validate_on_submit():
         if (form.body.data is not None):
-            newreply = Reply(body = form.body.data)
+            newreply = Reply(body = form.body.data, post = post_id)
             db.session.add(newreply)
             db.session.commit()
             flash('New Reply created!')
@@ -129,4 +127,4 @@ def comments(post_id):
     else: 
         replys = Reply.query.order_by(Reply.timestamp.desc())
 
-    return render_template('comments.html', post= post, form = form, replys = replys.all())
+    return render_template('comments.html', post= post, form = form, replys = replys.filter(post_id == Reply.post))
