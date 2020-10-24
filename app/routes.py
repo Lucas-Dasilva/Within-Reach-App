@@ -32,10 +32,10 @@ def index():
     #yeetcount is number of posts
     yeetcount = Post.query.count()
     sortForm = SortForm()
-    for post in Post.query.all():
-        calc_dist(post.id)
-            
-  
+    if session.get('latitude'):
+        for p in Post.query.all():
+            distance = calc_dist(p.id)
+
     if request.method == 'POST':
         option = 1
         #option = int(sortForm.sort.data)
@@ -49,24 +49,10 @@ def index():
         posts = Post.query.order_by(Post.timestamp.desc())
     return render_template('index.html', title="Welcome To Yeet Nah", posts= posts, yeetcount =  posts.count(), sortform = sortForm)
 
-#Create Post: Creates new post
-@app.route('/postsmile', methods=['GET', 'POST'])
-def createpost():
-    
-    tempPost = PostForm()
-    if tempPost.validate_on_submit():
-        if (tempPost.body.data is not None):
-            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'])
-            db.session.add(newpost)
-            db.session.commit()
-            yeetcount = Post.query.count()            
-            flash('New Post created!')
-            return redirect(url_for('index'))
-    return render_template('create.html', form = tempPost)
 
 #Calculate Distance of user to other posts 
 def calc_dist(post_id):
-    post_id_str = str(post_id)
+
     #Radius of earth in miles
     R = 3958.8
     post = Post.query.get(post_id)
@@ -86,10 +72,27 @@ def calc_dist(post_id):
 
     distance = R * c
 
-    session[post_id_str] = distance
+    session[str(post_id)] = distance
+    
     #add distance to the db colummn, in order to sort it out
-    print(session[post_id_str])
+    print(session[str(post_id)])
     return render_template('index.html')
+
+
+#Create Post: Creates new post
+@app.route('/postsmile', methods=['GET', 'POST'])
+def createpost():
+    
+    tempPost = PostForm()
+    if tempPost.validate_on_submit():
+        if (tempPost.body.data is not None):
+            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'])
+            db.session.add(newpost)
+            db.session.commit()
+            yeetcount = Post.query.count()            
+            flash('New Post created!')
+            return redirect(url_for('index'))
+    return render_template('create.html', form = tempPost)
 
 
 #Allows user to like posts

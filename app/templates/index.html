@@ -22,7 +22,9 @@
     {% endif %}
 
     <div class = "postlist">{% for post in posts %}
+        {% if session[((post.id)|string)] < 20 %}
         <div class="post-box">{% include '_post.html' %} </div>
+        {% endif%}
     {% endfor %}
     </div>
     
