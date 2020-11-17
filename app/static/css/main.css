@@ -33,8 +33,26 @@ textarea{
 #submit.button{
   size: 1em;
 }
+/* #find-me{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 16em;
+} */
+
 .title{
   padding-left: .25em;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+}
+.titleL{
+
+  display: block;
+  margin-top: 20%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  width: 50%;
   text-shadow: 2px 4px 20px #924DF9;
   color: #fff;
 }

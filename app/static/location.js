@@ -17,8 +17,9 @@ function geoFindMe() {
     obj.longitude = longitude;
     var locationString= JSON.stringify(obj);
     status.textContent = '';
-    mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
-    console.log(typeof(locationString));
+    // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    //console.log(typeof(locationString));
+    console.log(locationString)
     callAjax(locationString);
   }
 

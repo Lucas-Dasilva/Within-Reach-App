@@ -1,7 +1,18 @@
+<html>
+    <head >
+        {{ moment.include_jquery() }}
+        {{ moment.include_moment() }}
 
+       <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    </head>
 
+    <body class=  titleL>
+      <h1> Welcome to Within Reach!</h1>
+      <h2> This app requires location</h2>
+      <button id="find-me">Allow Location</button><br/>
+      <p id="status"></p>
+      <a id="map-link" target="_blank"></a>
+      <script type="text/javascript" src="static/location.js"></script>
+    </body>
 
-<button id="find-me">Show my location</button><br/>
-<p id="status"></p>
-<a id="map-link" target="_blank"></a>
-<script type="text/javascript" src="static/location.js"></script>
+</html>

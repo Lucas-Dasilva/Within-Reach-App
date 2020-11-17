@@ -18,7 +18,13 @@ def initDB(*args, **kwargs):
 
 @app.route('/', methods=['GET', 'POST'])
 def location():
-    return render_template('comments.html')
+    #Checking if we got the location completely
+    if 'latitude' in session:
+        #Calculates how far from each post a user is.
+        print ("session is not empty")
+        return redirect(url_for('index'))
+    else:
+        return render_template('location.html', title="Welcome to Within Reach")
 
 @app.route("/getLocation", methods = ['POST'])
 def locationHandler():
@@ -36,10 +42,9 @@ def index():
     #yeetcount is number of posts
     yeetcount = Post.query.count()
     sortForm = SortForm()
-    if session.get('latitude'):
+    if 'latitude' in session:
         for p in Post.query.all():
-            distance = calc_dist(p.id)
-
+            calc_dist(p.id)
     if request.method == 'POST':
         option = 1
         #option = int(sortForm.sort.data)
@@ -51,7 +56,7 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    return render_template('index.html', title="Welcome To Yeet Nah", posts= posts, yeetcount =  posts.count(), sortform = sortForm)
+    return render_template('index.html', title="Welcome to Within Reach", posts= posts, yeetcount =  posts.count(), sortform = sortForm)
 
 
 #Calculate Distance of user to other posts 
@@ -79,7 +84,7 @@ def calc_dist(post_id):
     session[str(post_id)] = distance
     
     #add distance to the db colummn, in order to sort it out
-    print(session[str(post_id)])
+    #print(distance)
     return render_template('index.html')
 
 
