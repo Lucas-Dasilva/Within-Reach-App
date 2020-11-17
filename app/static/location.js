@@ -37,7 +37,7 @@ function geoFindMe() {
   function callAjax(location){
     console.log("What it looks like:", location);
     jQuery.ajax({ 
-      url: '/location', 
+      url: '/getLocation', 
       type: "POST", 
       contentType: "application/json",
       data: location,

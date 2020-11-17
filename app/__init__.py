@@ -14,7 +14,6 @@ app.permanent_session_lifetime = timedelta(days = 1)
 from app import routes, models, errors
 
 from flask_moment import Moment
-
-
 moment = Moment(app)
+
 

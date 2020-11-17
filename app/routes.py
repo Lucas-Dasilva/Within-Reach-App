@@ -15,8 +15,12 @@ import requests, json
 @app.before_first_request
 def initDB(*args, **kwargs):
     db.create_all()
-   
-@app.route("/location", methods = ['POST'])
+
+@app.route('/', methods=['GET', 'POST'])
+def location():
+    return render_template('comments.html')
+
+@app.route("/getLocation", methods = ['POST'])
 def locationHandler():
     if request.method == 'POST':
         location = request.get_json()
@@ -26,9 +30,9 @@ def locationHandler():
     return ("Everythings fine", 200)
 
 #Main home page: Sorts, only displays nearby posts
-@app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
+    
     #yeetcount is number of posts
     yeetcount = Post.query.count()
     sortForm = SortForm()
