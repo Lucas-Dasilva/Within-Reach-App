@@ -8,8 +8,8 @@
 
 
 
-    <h1 class= "title">Welcome to Yeet Nah!</h1>
-    <h2 class= "title">Number of Yeets: {{yeetcount}} </h2>
+    <h1 class= "title">Welcome to Within Reach!</h1>
+    <h2 class= "title">Number of Posts: {{yeetcount}} </h2>
     {% if sortform %}
         <form action ="" method = 'POST'> 
             
@@ -23,6 +23,8 @@
 
     <div class = "postlist">{% for post in posts %}
         {% if session[((post.id)|string)] < 20 %}
+        <div class="post-box">{% include '_post.html' %} </div>
+        {% else %}
         <div class="post-box">{% include '_post.html' %} </div>
         {% endif%}
     {% endfor %}

@@ -2,6 +2,12 @@ from datetime import datetime
 
 from app import db
 
+
+# class User(db.model):
+#     id = unique id
+#     profile = unique profile pic
+#     City_Location = location
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(1500))

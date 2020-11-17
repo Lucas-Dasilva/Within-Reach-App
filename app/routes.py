@@ -80,7 +80,7 @@ def calc_dist(post_id):
 
 
 #Create Post: Creates new post
-@app.route('/postsmile', methods=['GET', 'POST'])
+@app.route('/postmsg', methods=['GET', 'POST'])
 def createpost():
     
     tempPost = PostForm()
