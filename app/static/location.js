@@ -1,12 +1,10 @@
-
-
 function geoFindMe() {
 
   const status = document.querySelector('#status');
-  const mapLink = document.querySelector('#map-link');
+  //const mapLink = document.querySelector('#map-link');
 
-  mapLink.href = '';
-  mapLink.textContent = '';
+  // mapLink.href = '';
+  // mapLink.textContent = '';
 
   function success(position) {
     const latitude  = position.coords.latitude;
@@ -19,7 +17,6 @@ function geoFindMe() {
     status.textContent = '';
     // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
     //console.log(typeof(locationString));
-    console.log(locationString)
     callAjax(locationString);
   }
 
@@ -32,7 +29,7 @@ function geoFindMe() {
     status.textContent = 'Geolocation is not supported by your browser';
   } else {
     status.textContent = 'Locating…';
-    navigator.geolocation.getCurrentPosition(success, error);
+    navigator.geolocation.watchPosition(success, error);
   }
 
   function callAjax(location){
@@ -45,10 +42,10 @@ function geoFindMe() {
       dataType: "text",
       timeout: 5000,
       success: function() { 
-        alert('Location was sent Susscefully!')
+        window.location.reload();
       },
       error:function(){
-        alert('error saving location')
+        alert('error saving location');
       }
     });
   }

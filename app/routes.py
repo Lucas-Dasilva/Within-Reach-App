@@ -20,8 +20,6 @@ def initDB(*args, **kwargs):
 def location():
     #Checking if we got the location completely
     if 'latitude' in session:
-        #Calculates how far from each post a user is.
-        print ("session is not empty")
         return redirect(url_for('index'))
     else:
         return render_template('location.html', title="Welcome to Within Reach")
@@ -30,8 +28,9 @@ def location():
 def locationHandler():
     if request.method == 'POST':
         location = request.get_json()
-    session['latitude'] = location['latitude']
-    session['longitude'] = location['longitude']    
+    #Must be rounded to avoid calc_dist issues
+    session['latitude'] = round(location['latitude'],7)
+    session['longitude'] = round(location['longitude'],7)
 
     return ("Everythings fine", 200)
 
@@ -72,9 +71,8 @@ def calc_dist(post_id):
     #Users location coordinates with session
     lat2 = radians(session['latitude'])
     lon2 = radians(session['longitude'])
-
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
+    dlon = (lon2) - (lon1)
+    dlat = (lat2) - (lat1)
 
     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
