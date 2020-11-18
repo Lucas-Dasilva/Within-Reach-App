@@ -1,1 +1,1 @@
-FLASK_APP=yeetnah.py
+FLASK_APP=application.py
