@@ -16,6 +16,9 @@ class Post(db.Model):
     latitude = db.Column(db.String(1500))
     longitude = db.Column(db.String(1500))
     replies = db.relationship('Reply', backref='replypost', lazy='dynamic')
+    liked = db.Column(db.Boolean, default=False, nullable=False)
+    disliked = db.Column(db.Boolean, default=False, nullable=False)
+
     def repr(self):
         return '<Post {}-{} >'.format(self.id,self.body)
 
@@ -27,3 +30,5 @@ class Reply(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
     post = db.Column(db.Integer, db.ForeignKey('post.id'))
+    liked = db.Column(db.Boolean, default=False, nullable=False)
+    disliked = db.Column(db.Boolean, default=False, nullable=False)

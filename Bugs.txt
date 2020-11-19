@@ -1,0 +1,3 @@
+1. Down voting a comment redirects to index
+2. Limit how many times a user can downvote a single comment
+3. Spamming upvote or downvote breaks

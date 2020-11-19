@@ -103,22 +103,41 @@ def createpost():
 
 
 #Allows user to like posts
-@app.route('/yeet/<post_id>', methods=['GET'])
+@app.route('/postLike/<post_id>', methods=['GET'])
 def addLike(post_id):
     post = Post.query.get(post_id)
-    post.likes = post.likes +1
+    if post.liked == True:
+        post.likes = post.likes -1
+        post.liked = False
+
+    elif post.disliked == True:
+        post.likes = post.likes +2
+        post.liked =  True
+        post.disliked = False
+    else:
+        post.likes = post.likes +1
+        post.liked =  True
     db.session.commit()
     return redirect(url_for('index', post=post))
 
 #Allows users to dislike posts, if a post gets less than 5 likes then it gets deleted
-@app.route('/nah/<post_id>', methods=['GET'])
+@app.route('/postDislike/<post_id>', methods=['GET'])
 def disLike(post_id):
     post = Post.query.get(post_id)
-    post.likes = post.likes -1
+    if post.disliked == True:
+        post.likes = post.likes +1
+        post.disliked = False
+    elif post.liked == True:
+        post.likes = post.likes -2
+        post.liked = False
+        post.disliked =  True
+    else:
+        post.likes = post.likes -1
+        post.disliked =  True
+    # elif post.likes < -5:
+    #     db.session.delete(post)
     db.session.commit()
-    if post.likes < -5:
-        db.session.delete(post)
-    db.session.commit()
+
     return redirect(url_for('index', post=post))
   
 @app.route('/postcomments/<post_id>', methods=['GET', 'POST'])
@@ -138,3 +157,45 @@ def comments(post_id):
         replys = Reply.query.order_by(Reply.timestamp.desc())
 
     return render_template('comments.html', post= post, form = form, replys = replys.filter(post_id == Reply.post))
+
+#Allows user to like posts
+@app.route('/repLike/<post_id>', methods=['GET'])
+def addLikeCom(post_id):
+    reply = Reply.query.get(post_id)
+    if reply.liked == True:
+        reply.likes = reply.likes -1
+        reply.liked = False
+
+    elif reply.disliked == True:
+        reply.likes = reply.likes +2
+        reply.liked =  True
+        reply.disliked = False
+    else:
+        reply.likes = reply.likes +1
+        reply.liked =  True
+    replys = Reply.query.order_by(Reply.timestamp.desc())
+
+    db.session.commit()
+    return redirect(url_for('comments', post_id=post_id))
+
+#Allows users to dislike replys, if a reply gets less than 5 likes then it gets deleted
+@app.route('/repDislike/<post_id>', methods=['GET'])
+def disLikeCom(post_id):
+    reply = Reply.query.get(post_id)
+    if reply.disliked == True:
+        reply.likes = reply.likes +1
+        reply.disliked = False
+    elif reply.liked == True:
+        reply.likes = reply.likes -2
+        reply.liked = False
+        reply.disliked =  True
+    else:
+        reply.likes = reply.likes -1
+        reply.disliked =  True
+    # elif reply.likes < -5:
+    #     db.session.delete(reply)
+    replys = Reply.query.order_by(Reply.timestamp.desc())
+
+    db.session.commit()
+
+    return redirect(url_for('comments', post_id=post_id))
