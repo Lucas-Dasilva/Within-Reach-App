@@ -159,9 +159,9 @@ def comments(post_id):
     return render_template('comments.html', post= post, form = form, replys = replys.filter(post_id == Reply.post))
 
 #Allows user to like posts
-@app.route('/repLike/<post_id>', methods=['GET'])
-def addLikeCom(post_id):
-    reply = Reply.query.get(post_id)
+@app.route('/repLike/<reply_id>', methods=['GET'])
+def addLikeCom(reply_id):
+    reply = Reply.query.get(reply_id)
     if reply.liked == True:
         reply.likes = reply.likes -1
         reply.liked = False
@@ -176,12 +176,12 @@ def addLikeCom(post_id):
     replys = Reply.query.order_by(Reply.timestamp.desc())
 
     db.session.commit()
-    return redirect(url_for('comments', post_id=post_id))
+    return redirect(url_for('comments', post_id=reply.post))
 
 #Allows users to dislike replys, if a reply gets less than 5 likes then it gets deleted
-@app.route('/repDislike/<post_id>', methods=['GET'])
-def disLikeCom(post_id):
-    reply = Reply.query.get(post_id)
+@app.route('/repDislike/<reply_id>', methods=['GET'])
+def disLikeCom(reply_id):
+    reply = Reply.query.get(reply_id)
     if reply.disliked == True:
         reply.likes = reply.likes +1
         reply.disliked = False
@@ -198,4 +198,4 @@ def disLikeCom(post_id):
 
     db.session.commit()
 
-    return redirect(url_for('comments', post_id=post_id))
+    return redirect(url_for('comments', post_id=reply.post))
