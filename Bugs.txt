@@ -1,3 +1,9 @@
 1. Down voting a comment redirects to index
 2. Limit how many times a user can downvote a single comment
 3. Spamming upvote or downvote breaks
+4.
+  How to add User:
+  In _reply.html and post.html:
+    if user_id == post_id
+      do green button check and link to route with if conditions
+    if the user is not the 

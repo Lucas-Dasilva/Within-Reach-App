@@ -17,7 +17,7 @@
 
     <div class = "postlist">{% for post in posts %}
         {% if session %}
-            {% if session[((post.id)|string)] < 20 %}
+            {% if session[(post.id|string)][0] < 20 %}
                 <div class="post-box">{% include '_post.html' %} </div>
             {% endif%}
         {% else %}

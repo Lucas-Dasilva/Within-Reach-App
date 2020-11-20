@@ -10,25 +10,33 @@
                     <div class="posttime">Posted at: {{ moment(reply.timestamp).format('LLL')}}</div>
                 </td>
                 <td class ="likeImg" width = "5%">
-                {% if reply.liked == False and reply.disliked == False %}
-                    <a href="{{ url_for('addLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
-                    <br>
-                    <div class="likecount">{{reply.likes}}</div>
-                    <a href="{{ url_for('disLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
-                    <br>
-                {% elif reply.liked == False and reply.disliked == True %}
-                    <a href="{{ url_for('addLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
-                    <br>
-                    <div class="likecount">{{reply.likes}}</div>
-                    <a href="{{ url_for('disLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowDown.png' )}}"  width="50"> </a>
-                    <br>
-                {% elif reply.liked == True and reply.disliked == False %}
-                    <a href="{{ url_for('addLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowUp.png' )}}"  width="50"> </a>
-                    <br>
-                    <div class="likecount">{{reply.likes}}</div>
-                    <a href="{{ url_for('disLikeCom',reply_id=reply.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                {% set repId = "r"+ (reply.id|string)%}
+                {% if repId in session %}
+                    {% if session[repId] == "upVoted" %}
+                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowUp.png' )}}"  width="50"> </a>
+                        <br>
+                        <div class="likecount">{{reply.likes}}</div>
+                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                        <br>
 
-                {% endif %}
+                    {% elif session[repId] == "downVoted" %}
+                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                        <br>
+                        <div class="likecount">{{reply.likes}}</div>
+                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowDown.png' )}}"  width="50"> </a>
+                        <br>
+                    {% else %}
+                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                        <br>
+                        <div class="likecount">{{reply.likes}}</div>
+                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+
+                    {% endif %}
+                {%endif%}
+                    <form action="{{ url_for('comments',post_id=post.id) }}" method="get">
+                      <input type="submit" value="▶ comments" >
+                    </form>
+                    <br>
                 </td>
                
             </tr>
