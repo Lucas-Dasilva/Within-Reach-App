@@ -6,9 +6,10 @@ from flask_sqlalchemy import sqlalchemy
 from math import sin,cos, sqrt, atan2, radians
 
 from app import app, db
-from app.forms import PostForm, SortForm, ReplyForm
-from app.models import Post, Reply
-import requests, json
+from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
+from app.models import Post, Reply, User, postLikeStatus
+from flask_login import current_user, login_user, logout_user, login_required
+# import requests, json
 
 
 
@@ -35,8 +36,10 @@ def locationHandler():
 
     return ("Everythings fine", 200)
 
-#Main home page: Sorts, only displays nearby posts
+#Main home page: Sorts, only displays nearby posts@app.route('/', methods=['GET', 'POST'])
+
 @app.route('/index', methods=['GET', 'POST'])
+@login_required
 def index():
     
     #yeetcount is number of posts
@@ -101,7 +104,7 @@ def createpost():
     tempPost = PostForm()
     if tempPost.validate_on_submit():
         if (tempPost.body.data is not None):
-            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'])
+            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'], user_id = current_user.id)
             db.session.add(newpost)
             db.session.commit()
             postCount = Post.query.count()            
@@ -116,20 +119,26 @@ def upVote(post_id):
     post = Post.query.get(post_id)
     #Must convert tuple back into list inorder to access it
     #if someone trys to upvote and hasnt upvoted yet
-    if session[str(post_id)][1] == None:
-        post.likes = post.likes + 1
-        session[str(post_id)][1]= "upVoted"
-    #If someone trys to upvote, but already has been upvoted
-    elif session[str(post_id)][1] == "upVoted":
-        post.likes = post.likes -1
-        session[str(post_id)][1] = None
-    #If someone trys to upvoted, but post is already downVoted
-    elif session[str(post_id)][1] == "downVoted":
-        post.likes = post.likes +2
-        session[str(post_id)][1] = "upVoted"
+    if current_user.id and post.id not in User.posts:
+        if postLikeStatus.status.query.count() == 0:
+            post.likes = post.likes + 1
+            postLikeStatus.status = "up"
+            postLikeStatus.post = post.id
+        #If someone trys to upvote, but already has been upvoted
+        elif postLikeStatus.status == "up":
+            post.likes = post.likes - 1
+            postLikeStatus.status == None
+            postLikeStatus.post = post.id
+        #If someone trys to upvoted, but post is already downVoted
+        elif postLikeStatus.status == "dn":
+            post.likes = post.likes + 2
+            postLikeStatus.status == "up"
+            postLikeStatus.post = post.id
     db.session.commit()
     session.modified =  True
     return redirect(url_for('index', post=post))
+
+    
 
 #Allows users to dislike posts, if a post gets less than 5 likes then it gets deleted
 @app.route('/postDislike/<post_id>', methods=['GET'])
@@ -165,7 +174,7 @@ def comments(post_id):
     form = ReplyForm()
     if form.validate_on_submit():
         if (form.body.data is not None):
-            newreply = Reply(body = form.body.data, post = post_id)
+            newreply = Reply(body = form.body.data, post = post_id, user_id = current_user.id)
             db.session.add(newreply)
             db.session.commit()
             flash('New Reply created!')
@@ -183,17 +192,17 @@ def upVoteReply(reply_id):
     post = Post.query.get(reply_id)
     #Must convert tuple back into list inorder to access it
     #if someone trys to upvote and hasnt upvoted yet
-    if session[str(reply_id)][1] == None:
+    if str(reply_id)[1] == None:
         post.likes = post.likes + 1
-        session[str(reply_id)][1]= "upVoted"
+        str(reply_id)[1]= "upVoted"
     #If someone trys to upvote, but already has been upvoted
-    elif session[str(reply_id)][1] == "upVoted":
+    elif str(reply_id)[1] == "upVoted":
         post.likes = post.likes -1
-        session[str(reply_id)][1] = None
+        str(reply_id)[1] = None
     #If someone trys to upvoted, but post is already downVoted
-    elif session[str(reply_id)][1] == "downVoted":
+    elif str(reply_id)[1] == "downVoted":
         post.likes = post.likes +2
-        session[str(post_id)][1] = "upVoted"
+        str(reply_id)[1] = "upVoted"
     db.session.commit()
     session.modified =  True
     return redirect(url_for('comments', post_id=post.post))
@@ -218,3 +227,34 @@ def downVoteReply(reply_id):
     db.session.commit()
     session.modified =  True
     return redirect(url_for('index', post=post.post))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Registered!')
+        return redirect(url_for('index'))
+    return render_template('register.html', title='Register', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.get_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Sign In', form=form)
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))

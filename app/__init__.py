@@ -3,6 +3,7 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from datetime import timedelta
 from flask_moment import Moment
+from flask_login import LoginManager
 
 application = app = Flask(__name__)
 app.config.from_object(Config)
@@ -14,6 +15,8 @@ app.secret_key = "hello"
 app.permanent_session_lifetime = timedelta(days = 1)
 moment = Moment(app)
 
+login = LoginManager(app)
+login.login_view = 'login'
 
 from app import routes, models, errors
 
