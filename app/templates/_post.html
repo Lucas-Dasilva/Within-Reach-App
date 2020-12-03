@@ -40,6 +40,18 @@
                       <input type="submit" value="▶ comments" >
                     </form>
                     <br>
+                    {% if post.user_id == current_user.id %}
+                        <form action="{{ url_for('delete', post_id = post.id) }}" method="post">
+                            <input type="submit" value="delete" >
+                        </form>
+                    {% endif %}
+                    {% if post.user_id == current_user.id %}
+                        <form action="{{ url_for('edit', post_id = post.id) }}" method="post">
+                            <input type="submit" value="edit" >
+                        </form>
+                    {% endif %}
+                    <br>
+                    <br>
                 </td>
                
             </tr>

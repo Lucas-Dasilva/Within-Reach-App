@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from sqlalchemy.sql.elements import False_
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -25,16 +27,20 @@ class Post(db.Model):
     replies = db.relationship('Reply', backref='replypost', lazy='dynamic')
     def repr(self):
         return '<Post {}-{} >'.format(self.id,self.body)
-    likeStatus = db.Column(db.String(2), default = 0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+# Nothing = 0, upvote = 1, downvote = -1
 class postLikeStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     post = db.Column(db.Integer, default = 0)
-    status = db.Column(db.String(2))
+    status = db.Column(db.Integer, default = 0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class replyLikeStatus(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     reply = db.Column(db.Integer, default = 0)
-    status = db.Column(db.String(2))
+    status = db.Column(db.Integer, default = 0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)

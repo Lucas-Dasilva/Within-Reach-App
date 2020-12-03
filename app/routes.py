@@ -112,31 +112,57 @@ def createpost():
             return redirect(url_for('index'))
     return render_template('create.html', form = tempPost)
 
-
-#Allows user to like posts
-@app.route('/postLike/<post_id>', methods=['GET'])
+@login_required
+@app.route('/postLike/<post_id>', methods = ['GET'])
 def upVote(post_id):
     post = Post.query.get(post_id)
-    #Must convert tuple back into list inorder to access it
-    #if someone trys to upvote and hasnt upvoted yet
-    if current_user.id and post.id not in User.posts:
-        if postLikeStatus.status.query.count() == 0:
+    # postId = post.user.id
+    user_id = current_user.id
+    # Check if user already reacted to post
+    if post.id == postLikeStatus.post:
+        # upvote
+        post.likes = post.likes + 1
+    # If they already reacted to the post
+    elif post.id != postLikeStatus.post:
+        reactedPost = postLikeStatus.query.get(post_id)
+        # Conditional for changing statuses
+        if reactedPost.status == 0:
+            # upvote
             post.likes = post.likes + 1
-            postLikeStatus.status = "up"
-            postLikeStatus.post = post.id
-        #If someone trys to upvote, but already has been upvoted
-        elif postLikeStatus.status == "up":
+        if reactedPost.status == 1:
+            # un - upvote
             post.likes = post.likes - 1
-            postLikeStatus.status == None
-            postLikeStatus.post = post.id
-        #If someone trys to upvoted, but post is already downVoted
-        elif postLikeStatus.status == "dn":
+        if reactedPost.status == -1:
+            # upvote, remember to add +2
             post.likes = post.likes + 2
-            postLikeStatus.status == "up"
-            postLikeStatus.post = post.id
     db.session.commit()
-    session.modified =  True
-    return redirect(url_for('index', post=post))
+    session.modified = True
+    return redirect(url_for('index', post = post))
+
+#Allows user to like posts
+# @app.route('/postLike/<post_id>', methods=['GET'])
+# def upVote(post_id):
+#     post = Post.query.get(post_id)
+#     #Must convert tuple back into list inorder to access it
+#     #if someone trys to upvote and hasnt upvoted yet
+#     if current_user.id and post.id not in User.posts:
+#         if postLikeStatus.status.query.count() == 0:
+#             post.likes = post.likes + 1
+#             postLikeStatus.status = "up"
+#             postLikeStatus.post = post.id
+#         #If someone trys to upvote, but already has been upvoted
+#         elif postLikeStatus.status == "up":
+#             post.likes = post.likes - 1
+#             postLikeStatus.status == None
+#             postLikeStatus.post = post.id
+#         #If someone trys to upvoted, but post is already downVoted
+#         elif postLikeStatus.status == "dn":
+#             post.likes = post.likes + 2
+#             postLikeStatus.status == "up"
+#             postLikeStatus.post = post.id
+#     db.session.commit()
+#     session.modified =  True
+#     return redirect(url_for('index', post=post))
 
     
 
@@ -258,3 +284,33 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+# Delete post
+@app.route('/delete/<post_id>', methods=['POST', 'DELETE'])
+@login_required
+def delete(post_id):
+    thepost = Post.query.get(post_id)
+    # for t in thepost.tags:
+    #     thepost.tags.remove(t)
+    db.session.commit()
+    db.session.delete(thepost)
+    flash('Post deleted.')
+    db.session.commit()
+    return redirect(url_for('index', thepost = thepost))
+
+#Edit post by deleting current post and replacing with new post
+@app.route('/edit/<post_id>', methods=['GET', 'POST'])
+@login_required
+def edit(post_id):
+    tempPost = PostForm()
+    thepost = Post.query.get(post_id)
+    db.session.delete(thepost)
+    if tempPost.validate_on_submit():
+        if (tempPost.body.data is not None):
+            newpost = Post(body = tempPost.body.data, latitude = session['latitude'],longitude = session['longitude'], user_id = current_user.id)
+            db.session.add(newpost)
+            db.session.commit()
+            postCount = Post.query.count()            
+            flash('Post edited!')
+            return redirect(url_for('index'))
+    return render_template('edit.html', form = tempPost, thepost = thepost)
