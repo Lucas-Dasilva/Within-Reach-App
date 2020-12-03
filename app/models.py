@@ -6,17 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
 
-# thread_upvotes = db.Table('thread_upvotes',
-#     db.Column('user_id', db.Integer, db.ForeignKey('users_user.id')),
-#     db.Column('thread_id', db.Integer, db.ForeignKey('threads_thread.id'))
-# )
-
-# comment_upvotes = db.Table('comment_upvotes',
-#     db.Column('user_id', db.Integer, db.ForeignKey('users_user.id')),
-#     db.Column('comment_id', db.Integer, db.ForeignKey('threads_comment.id'))
-# )
-
-
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(1500))
@@ -29,19 +18,6 @@ class Post(db.Model):
         return '<Post {}-{} >'.format(self.id,self.body)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-# Nothing = 0, upvote = 1, downvote = -1
-class postLikeStatus(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    post = db.Column(db.Integer, default = 0)
-    status = db.Column(db.Integer, default = 0)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-class replyLikeStatus(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    reply = db.Column(db.Integer, default = 0)
-    status = db.Column(db.Integer, default = 0)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(1500))
@@ -50,7 +26,6 @@ class Reply(db.Model):
     liked = db.Column(db.Boolean, default=False, nullable=False)
     disliked = db.Column(db.Boolean, default=False, nullable=False)
     post = db.Column(db.Integer, db.ForeignKey('post.id'))
-    likeStatus = db.Column(db.String(2), default = 0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(UserMixin, db.Model):
@@ -67,6 +42,23 @@ class User(UserMixin, db.Model):
     def get_password(self, password):
         return check_password_hash(self.password_hash, password)
     posts = db.relationship('Post', backref='writer', lazy='dynamic')
+    reactions = db.relationship('reactedPost', backref='user', lazy='dynamic')
+
+#Post that user has reacted to
+class reactedPost(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post = db.Column(db.Integer, default = 0)
+    # Nothing = 0, upvote = 1, downvote = -1
+    status = db.Column(db.Integer, default = 0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+#Replys that user has reacted to
+class reactedReply(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reply = db.Column(db.Integer, default = 0)
+    # Nothing = 0, upvote = 1, downvote = -1
+    status = db.Column(db.Integer, default = 0)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 @login.user_loader
 def load_user(id):

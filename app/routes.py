@@ -7,7 +7,7 @@ from math import sin,cos, sqrt, atan2, radians
 
 from app import app, db
 from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
-from app.models import Post, Reply, User, postLikeStatus
+from app.models import Post, Reply, User, reactedPost,reactedReply
 from flask_login import current_user, login_user, logout_user, login_required
 # import requests, json
 
@@ -112,57 +112,50 @@ def createpost():
             return redirect(url_for('index'))
     return render_template('create.html', form = tempPost)
 
-@login_required
-@app.route('/postLike/<post_id>', methods = ['GET'])
-def upVote(post_id):
-    post = Post.query.get(post_id)
-    # postId = post.user.id
-    user_id = current_user.id
-    # Check if user already reacted to post
-    if post.id == postLikeStatus.post:
-        # upvote
-        post.likes = post.likes + 1
-    # If they already reacted to the post
-    elif post.id != postLikeStatus.post:
-        reactedPost = postLikeStatus.query.get(post_id)
-        # Conditional for changing statuses
-        if reactedPost.status == 0:
-            # upvote
-            post.likes = post.likes + 1
-        if reactedPost.status == 1:
-            # un - upvote
-            post.likes = post.likes - 1
-        if reactedPost.status == -1:
-            # upvote, remember to add +2
-            post.likes = post.likes + 2
-    db.session.commit()
-    session.modified = True
-    return redirect(url_for('index', post = post))
 
 #Allows user to like posts
-# @app.route('/postLike/<post_id>', methods=['GET'])
-# def upVote(post_id):
-#     post = Post.query.get(post_id)
-#     #Must convert tuple back into list inorder to access it
-#     #if someone trys to upvote and hasnt upvoted yet
-#     if current_user.id and post.id not in User.posts:
-#         if postLikeStatus.status.query.count() == 0:
-#             post.likes = post.likes + 1
-#             postLikeStatus.status = "up"
-#             postLikeStatus.post = post.id
-#         #If someone trys to upvote, but already has been upvoted
-#         elif postLikeStatus.status == "up":
-#             post.likes = post.likes - 1
-#             postLikeStatus.status == None
-#             postLikeStatus.post = post.id
-#         #If someone trys to upvoted, but post is already downVoted
-#         elif postLikeStatus.status == "dn":
-#             post.likes = post.likes + 2
-#             postLikeStatus.status == "up"
-#             postLikeStatus.post = post.id
-#     db.session.commit()
-#     session.modified =  True
-#     return redirect(url_for('index', post=post))
+@app.route('/postLike/<post_id>', methods=['GET'])
+def upVote(post_id):
+    post = Post.query.get(post_id)
+    user = User.query.get(current_user.id)
+    #Must convert tuple back into list inorder to access it
+    #if someone trys to upvote and hasnt upvoted yet
+    # if user.reactions.query.count() != 0:
+    found = False
+    if user.reactions.count() > 0:
+        for react in user.reactions:
+            if react.post == post.id:
+                if react.status == 1:
+                    found = True
+                    post.likes = post.likes - 1
+                    user.karma = user.karma - 1
+                    db.session.delete(react)
+                else:
+                    found = True
+                    newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
+                    db.session.add(newReaction)
+                    post.likes = post.likes + 1
+                    user.karma = user.karma + 1
+    if found == False:
+        newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
+        db.session.add(newReaction)
+        post.likes = post.likes + 1
+        user.karma = user.karma + 1
+    #     postLikeStatus.status = "up"
+    #     postLikeStatus.post = post.id
+    # #If someone trys to upvote, but already has been upvoted
+    # elif postLikeStatus.status == "up":
+    #     post.likes = post.likes - 1
+    #     postLikeStatus.status == None
+    #     postLikeStatus.post = post.id
+    # #If someone trys to upvoted, but post is already downVoted
+    # elif postLikeStatus.status == "dn":
+    #     post.likes = post.likes + 2
+    #     postLikeStatus.status == "up"
+    #     postLikeStatus.post = post.id
+    db.session.commit()
+    session.modified =  True
+    return redirect(url_for('index', post=post))
 
     
 
@@ -290,9 +283,6 @@ def logout():
 @login_required
 def delete(post_id):
     thepost = Post.query.get(post_id)
-    # for t in thepost.tags:
-    #     thepost.tags.remove(t)
-    db.session.commit()
     db.session.delete(thepost)
     flash('Post deleted.')
     db.session.commit()
