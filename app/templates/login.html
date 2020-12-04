@@ -20,7 +20,9 @@
             {% endfor %}
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit(class='button') }}</p>
+        <button id="find-me" type="submit">Login</button><br>
+        <p id="status"></p>
+        <script type="text/javascript" src="static/location.js"></script>
         <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
 
     </form>

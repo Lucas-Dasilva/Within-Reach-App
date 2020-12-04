@@ -29,7 +29,7 @@ function geoFindMe() {
     status.textContent = 'Geolocation is not supported by your browser';
   } else {
     status.textContent = 'Locating…';
-    navigator.geolocation.watchPosition(success, error);
+    navigator.geolocation.getCurrentPosition(success, error);
   }
 
   function callAjax(location){
@@ -42,7 +42,7 @@ function geoFindMe() {
       dataType: "text",
       timeout: 5000,
       success: function() { 
-        window.location.reload();
+        alert("hi")
       },
       error:function(){
         alert('error saving location');
@@ -50,7 +50,4 @@ function geoFindMe() {
     });
   }
 }
-
-
-
 document.getElementById('find-me').addEventListener('click', geoFindMe);

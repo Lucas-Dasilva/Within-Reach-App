@@ -18,14 +18,6 @@ def initDB(*args, **kwargs):
     session.permanent = True
     db.create_all()
 
-@app.route('/', methods=['GET', 'POST'])
-def location():
-    #Checking if we got the location completely
-    if 'latitude' in session:
-        return redirect(url_for('index'))
-    else:
-        return render_template('location.html', title="Welcome to Within Reach")
-
 @app.route("/getLocation", methods = ['POST'])
 def locationHandler():
     if request.method == 'POST':
@@ -37,7 +29,7 @@ def locationHandler():
     return ("Everythings fine", 200)
 
 #Main home page: Sorts, only displays nearby posts@app.route('/', methods=['GET', 'POST'])
-
+@app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -51,7 +43,7 @@ def index():
                 calc_dist(p.id)
     #Checks if location has already been received
     if 'latitude' not in session:
-        return render_template('location.html', title="Welcome to Within Reach")
+        return redirect(url_for("register"))
         
     if request.method == 'POST':
         option = 1
@@ -117,42 +109,35 @@ def createpost():
 @app.route('/postLike/<post_id>', methods=['GET'])
 def upVote(post_id):
     post = Post.query.get(post_id)
+    #User that made the post
+    postOwner = User.query.get(post.user_id)
+    #Current User
     user = User.query.get(current_user.id)
-    #Must convert tuple back into list inorder to access it
-    #if someone trys to upvote and hasnt upvoted yet
-    # if user.reactions.query.count() != 0:
     found = False
-    if user.reactions.count() > 0:
-        for react in user.reactions:
-            if react.post == post.id:
-                if react.status == 1:
-                    found = True
-                    post.likes = post.likes - 1
-                    user.karma = user.karma - 1
-                    db.session.delete(react)
-                else:
-                    found = True
-                    newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
-                    db.session.add(newReaction)
-                    post.likes = post.likes + 1
-                    user.karma = user.karma + 1
-    if found == False:
-        newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
-        db.session.add(newReaction)
-        post.likes = post.likes + 1
-        user.karma = user.karma + 1
-    #     postLikeStatus.status = "up"
-    #     postLikeStatus.post = post.id
-    # #If someone trys to upvote, but already has been upvoted
-    # elif postLikeStatus.status == "up":
-    #     post.likes = post.likes - 1
-    #     postLikeStatus.status == None
-    #     postLikeStatus.post = post.id
-    # #If someone trys to upvoted, but post is already downVoted
-    # elif postLikeStatus.status == "dn":
-    #     post.likes = post.likes + 2
-    #     postLikeStatus.status == "up"
-    #     postLikeStatus.post = post.id
+    #Do this only if post does not belong to user
+    if user.id != post.user_id:
+        if user.reactions.count() > 0:
+            for react in user.reactions:
+                if react.post == post.id:
+                    #If local user trys to unUpvote a post (Take it out of database)
+                    if react.status == 1:
+                        found = True
+                        post.likes = post.likes - 1
+                        postOwner.karma = postOwner.karma - 1
+                        db.session.delete(react)
+                    #If local user trys to up vote a post that is already downvote (Stays in database)
+                    elif react.status == -1:
+                        found = True
+                        newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
+                        db.session.add(newReaction)
+                        postOwner.karma = postOwner.karma - 1
+                        post.likes = post.likes + 2
+        #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+        if found == False:
+            newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
+            db.session.add(newReaction)
+            post.likes = post.likes + 1
+            postOwner.karma = postOwner.karma + 1
     db.session.commit()
     session.modified =  True
     return redirect(url_for('index', post=post))
@@ -163,19 +148,36 @@ def upVote(post_id):
 @app.route('/postDislike/<post_id>', methods=['GET'])
 def downVote(post_id):
     post = Post.query.get(post_id)
-    #Must convert tuple back into list inorder to access it
-    #if someone trys to upvote and hasnt upvoted yet
-    if session[str(post_id)][1] == None:
-        post.likes = post.likes - 1
-        session[str(post_id)][1]= "downVoted"
-    #If someone trys to upvote, but already has been upvoted
-    elif session[str(post_id)][1] == "downVoted":
-        post.likes = post.likes +1
-        session[str(post_id)][1] = None
-    #If someone trys to upvoted, but post is already downVoted
-    elif session[str(post_id)][1] == "upVoted":
-        post.likes = post.likes -2
-        session[str(post_id)][1] = "downVoted"
+    #User that made the post
+    postOwner = User.query.get(post.user_id)
+    #Current User
+    user = User.query.get(current_user.id)
+    found = False
+
+    #Do this only if post does not belong to user
+    if user.id != post.user_id:
+        if user.reactions.count() > 0:
+            for react in user.reactions:
+                if react.post == post.id:
+                    #If local user trys to unUpvote a post (Take it out of database)
+                    if react.status == -1:
+                        found = True
+                        post.likes = post.likes + 1
+                        postOwner.karma = postOwner.karma + 1
+                        db.session.delete(react)
+                    #If local user trys to up vote a post that is already downvote (Stays in database)
+                    elif react.status == 1:
+                        found = True
+                        newReaction = reactedPost(post = post.id, status = -1, user_id = user.id)
+                        db.session.add(newReaction)
+                        postOwner.karma = postOwner.karma - 1
+                        post.likes = post.likes - 2
+        #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+        if found == False:
+            newReaction = reactedPost(post = post.id, status = -1, user_id = user.id)
+            db.session.add(newReaction)
+            post.likes = post.likes - 1
+            postOwner.karma = postOwner.karma - 1
     db.session.commit()
     session.modified =  True
     return redirect(url_for('index', post=post))
@@ -249,14 +251,16 @@ def downVoteReply(reply_id):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    # latitude = session["latitude"], longitude = session["longitude"]
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        return redirect(url_for("login"))
         flash('Registered!')
-        return redirect(url_for('index'))
+
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -269,8 +273,13 @@ def login():
         if user is None or not user.get_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
-        login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('index'))
+        else:
+            login_user(user, remember=form.remember_me.data)
+            newLocation = User.query.get(current_user.id)
+            newLocation.latitude = session["latitude"]
+            newLocation.longitude = session["longitude"]
+            db.session.commit()
+            return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 
 @app.route('/logout')
