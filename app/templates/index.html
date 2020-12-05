@@ -2,8 +2,8 @@
 
 {% block content %}
 
-    <h1 class= "title">Welcome to Within Reach!</h1>
-    <h2 class= "title">Number of Posts: {{yeetcount}} </h2>
+    <img src="{{ url_for('static', filename = 'logo.png' )}}" width="300" class = "images">
+    <h1 class= "hometitle">Within Reach</h1>
     {% if sortform %}
         <form action ="" method = 'POST'> 
             
@@ -16,6 +16,7 @@
     {% endif %}
 
     <div class = "postlist">{% for post in posts %}
+        <!-- Only show posts within a certain mile radius -->
         {% if session %}
             {% if session[(post.id|string)][0] < 20 %}
                 <div class="post-box">{% include '_post.html' %} </div>

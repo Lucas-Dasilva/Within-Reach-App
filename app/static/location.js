@@ -42,7 +42,8 @@ function geoFindMe() {
       dataType: "text",
       timeout: 5000,
       success: function() { 
-        alert("hi")
+        console.log('Your Location: '+ location);
+        // window.location.reload()
       },
       error:function(){
         alert('error saving location');

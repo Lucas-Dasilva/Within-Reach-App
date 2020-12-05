@@ -37,6 +37,13 @@ def index():
     #yeetcount is number of posts
     postCount = Post.query.count()
     sortForm = SortForm()
+    user = User.query.get(current_user.id)
+    totalReactions = user.reactions.count()
+    #if position has changed update User database location
+    if (session["latitude"] != user.latitude) or (session["longitude"] != user.longitude):
+        user.latitude = session["latitude"]
+        user.longitude = session["longitude"]
+        db.session.commit()
     if 'latitude' in session:
         for p in Post.query.all():
             if str(p.id) not in session:
@@ -56,7 +63,7 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm)
+    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm, user = user, totalReactions = totalReactions)
 
 
 #Calculate Distance of user to other posts 
@@ -116,8 +123,10 @@ def upVote(post_id):
     found = False
     #Do this only if post does not belong to user
     if user.id != post.user_id:
+        #Check if they have already reacted to other posts
         if user.reactions.count() > 0:
             for react in user.reactions:
+                #if current user has reacted to this post before
                 if react.post == post.id:
                     #If local user trys to unUpvote a post (Take it out of database)
                     if react.status == 1:
@@ -128,9 +137,8 @@ def upVote(post_id):
                     #If local user trys to up vote a post that is already downvote (Stays in database)
                     elif react.status == -1:
                         found = True
-                        newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
-                        db.session.add(newReaction)
-                        postOwner.karma = postOwner.karma - 1
+                        react.status = 1
+                        postOwner.karma = postOwner.karma + 2
                         post.likes = post.likes + 2
         #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
         if found == False:
@@ -168,9 +176,8 @@ def downVote(post_id):
                     #If local user trys to up vote a post that is already downvote (Stays in database)
                     elif react.status == 1:
                         found = True
-                        newReaction = reactedPost(post = post.id, status = -1, user_id = user.id)
-                        db.session.add(newReaction)
-                        postOwner.karma = postOwner.karma - 1
+                        react.status = -1
+                        postOwner.karma = postOwner.karma - 2
                         post.likes = post.likes - 2
         #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
         if found == False:
@@ -252,6 +259,9 @@ def downVoteReply(reply_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     # latitude = session["latitude"], longitude = session["longitude"]
+        #If user is already authenticated
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data)
@@ -263,22 +273,22 @@ def register():
 
     return render_template('register.html', title='Register', form=form)
 
+#Upon logging in, users location is saved to session, but only gets saved unto database, upon entering index
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    #If user is already authenticated
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
+        #If user can't be found in database or password is wrong
         if user is None or not user.get_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
         else:
             login_user(user, remember=form.remember_me.data)
-            newLocation = User.query.get(current_user.id)
-            newLocation.latitude = session["latitude"]
-            newLocation.longitude = session["longitude"]
-            db.session.commit()
+            # flash("Location saved to session!")
             return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
 

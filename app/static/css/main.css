@@ -25,7 +25,7 @@ body {
 }
 .navitem{
   color: #fff;
-  text-shadow: 2px 4px 20px #924DF9;
+  text-shadow: 2px 4px 20px #a96fff;
 }
 .sort{
   color:#FF3366;
@@ -50,7 +50,7 @@ textarea{
 
 .title{
   padding-left: .25em;
-  text-shadow: 2px 4px 20px #924DF9;
+  text-shadow: 2px 4px 20px #a96fff;
   color: #fff;
 }
 .titleL{
@@ -66,18 +66,15 @@ textarea{
 }
 .flash-container {
   text-align: center;
-  padding: 15px;
-  margin-left: 50em;
-  margin-right: 50em;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  padding: 1px;
   border: 1px solid transparent;
-  border-radius: 4px;
-  background-color:#dff0d8;
-  color: #3c763d;
+  margin-left: 600px;
+  margin-right: 600px;
+  background-color:#0E0240;
+  color: #ffa733;
   font-size: 16px;
-
 }
+
 .nav-container {
   padding-top: 1em;
   font-family: 'Dosis', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -105,10 +102,23 @@ a:hover {
 }
 .button:hover {
   background-color: #FF3366;
-  ;
   color: white;
 }
 
+.loginbutton {
+  background-color: whitesmoke;
+  width : 85px;
+  padding : 3px;    
+  font-size: 20px;
+  margin : 5px;
+  padding : 5px;
+  border: 1px solid lightgray;
+  margin-left: 46%;
+}
+.loginbutton:hover {
+  background-color: #FF3366;
+  color: white;
+}
 
 .likecount{
   margin-left: 1.23em;
@@ -134,19 +144,102 @@ a:hover {
 
 .posttable {
   margin-top: 1em;
-  color:#8C3EFF; 
+  color:#a96fff; 
   border-radius: 1em;
   background-color:#0E0240; 
 }
+
+.commentbutton {
+  text-align: center;
+  margin-top: .1em;
+  color:#a96fff; 
+  border-radius: 0.5em;
+  background-color: rgb(23, 240, 240); 
+}
+
+.commentbutton:hover {
+  color: #0E0240;
+  background-color :rgb(116, 74, 233); 
+}
+
+.deletebutton {
+  text-align: center;
+  margin-top: .1em;
+  color:#a96fff; 
+  border-radius: 0.5em;
+  background-color: rgb(23, 240, 240); 
+}
+
+/* old color: 8C3EFF */
+
+.deletebutton:hover {
+  color: #0E0240;
+  background-color : #FF3366; 
+}
+
+.editbutton {
+  text-align: center;
+  margin-top: .1em;
+  color:#a96fff; 
+  border-radius: 0.5em;
+  background-color: rgb(23, 240, 240); 
+}
+
+.editbutton:hover {
+  color: #0E0240;
+  background-color : #ffa733; 
+}
+
 .postbody{
   font-size: 16px;
   padding:.5em;
   margin-bottom: 2em;
 }
 .posttime{
+  color : rgb(23, 240, 240); 
   font-size: 12px;
   padding: .5em;
 }
+
+.logintitle {
+  display: block;
+  margin-top: 5%;
+  text-align: center;
+  width: 50%;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+  margin-left: 25%;
+}
+
+.hometitle {
+  display: block;
+  margin-top: 1%;
+  text-align: center;
+  width: 50%;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+  margin-left: 24%;
+}
+
+.images {
+  margin-left: 40%;
+}
+
+.login{
+  display:block;
+  color: #f6ac4b;
+  font-size: 20px;
+  padding: 0.1em;
+  margin-left: 40%;
+}
+
+.loginremember{
+  color: #FF3366;
+  font-size: 20px;
+  padding: 0.1em;
+  /* margin-left: 40%; */
+}
+
 .postlist{
   display: flex;
   flex-wrap: wrap;
@@ -154,9 +247,27 @@ a:hover {
 .post-box{
   display: flex;
   vertical-align: middle;
-
-
 }
+
+.currentuser{
+  color : #a96fff; 
+  font-size: 12px;
+  padding: .5em;
+}
+
+.textinput{
+  margin-left: 40%;
+  font-size: 20px;
+  width: 20%;
+}
+
+.checkbox{
+  margin-left: 40%;
+}
+.error{
+  margin-left: 40%;
+}
+
 @media screen and (min-width: 1200px) {
   .post-box{
       width: 32%;
