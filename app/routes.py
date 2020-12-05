@@ -107,7 +107,7 @@ def createpost():
             db.session.add(newpost)
             db.session.commit()
             postCount = Post.query.count()            
-            flash('New Post created!')
+            #flash('New Post created!')
             return redirect(url_for('index'))
     return render_template('create.html', form = tempPost)
 

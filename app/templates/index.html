@@ -14,16 +14,17 @@
         </form>
     {% endif %}
 
-    <div class = "postlist">{% for post in posts %}
-        <!-- Only show posts within a certain mile radius -->
-        {% if session %}
-            {% if session[(post.id|string)][0] < 20 %}
+    <div class = "postlist">
+        {% for post in posts %}
+            <!-- Only show posts within a certain mile radius -->
+            {% if session %}
+                {% if session[(post.id|string)][0] < 20 %}
+                    <div class="post-box">{% include '_post.html' %} </div>
+                {% endif%}
+            {% else %}
                 <div class="post-box">{% include '_post.html' %} </div>
             {% endif%}
-        {% else %}
-        <div class="post-box">{% include '_post.html' %} </div>
-        {% endif%}
-    {% endfor %}
+        {% endfor %}
     </div>
     
 {% endblock %}
