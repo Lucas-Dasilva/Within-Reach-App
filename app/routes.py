@@ -214,47 +214,80 @@ def comments(post_id):
 
     return render_template('comments.html', post= post, form = form, replys = replys.filter(post_id == Reply.post))
 
-#Allows user to like posts
-@app.route('/replyUp/<reply_id>', methods=['GET'])
+#Allows user to like replies
+@app.route('/replyLike/<reply_id>', methods=['GET'])
 def upVoteReply(reply_id):
-    post = Post.query.get(reply_id)
-    #Must convert tuple back into list inorder to access it
-    #if someone trys to upvote and hasnt upvoted yet
-    if str(reply_id)[1] == None:
-        post.likes = post.likes + 1
-        str(reply_id)[1]= "upVoted"
-    #If someone trys to upvote, but already has been upvoted
-    elif str(reply_id)[1] == "upVoted":
-        post.likes = post.likes -1
-        str(reply_id)[1] = None
-    #If someone trys to upvoted, but post is already downVoted
-    elif str(reply_id)[1] == "downVoted":
-        post.likes = post.likes +2
-        str(reply_id)[1] = "upVoted"
+    reply = Reply.query.get(reply_id)
+    #User that made the reply
+    replyOwner = User.query.get(reply.user_id)
+    #Current User
+    user = User.query.get(current_user.id)
+    found = False
+    #Do this only if reply does not belong to user
+    if user.id != reply.user_id:
+        #Check if they have already reacted to other replies
+        if user.reactions.count() > 0:
+            for react in user.reactions:
+                #if current user has reacted to this post before
+                if react.post == reply.id:
+                    #If local user trys to unUpvote a post (Take it out of database)
+                    if react.status == 1:
+                        found = True
+                        reply.likes = reply.likes - 1
+                        replyOwner.karma = replyOwner.karma - 1
+                        db.session.delete(react)
+                    #If local user trys to up vote a post that is already downvote (Stays in database)
+                    elif react.status == -1:
+                        found = True
+                        react.status = 1
+                        replyOwner.karma = replyOwner.karma + 2
+                        reply.likes = reply.likes + 2
+        #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+        if found == False:
+            newReaction = reactedReply(reply = reply.id, status = 1, user_id = user.id)
+            db.session.add(newReaction)
+            reply.likes = reply.likes + 1
+            replyOwner.karma = replyOwner.karma + 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('comments', post_id=post.post))
+    return redirect(url_for('index', reply=reply))
 
-#Allows users to dislike replys, if a reply gets less than 5 likes then it gets deleted
-@app.route('/replyDown/<reply_id>', methods=['GET'])
+#Allows users to dislike replies, if a reply gets less than 5 likes then it gets deleted
+@app.route('/replyDislike/<reply_id>', methods=['GET'])
 def downVoteReply(reply_id):
-    post = Post.query.get(reply_id)
-    #Must convert tuple back into list inorder to access it
-    #if someone trys to upvote and hasnt upvoted yet
-    if session[str(reply_id)][1] == None:
-        post.likes = post.likes - 1
-        session[str(reply_id)][1]= "downVoted"
-    #If someone trys to upvote, but already has been upvoted
-    elif session[str(reply_id)][1] == "downVoted":
-        post.likes = post.likes +1
-        session[str(reply_id)][1] = None
-    #If someone trys to upvoted, but post is already downVoted
-    elif session[str(reply_id)][1] == "upVoted":
-        post.likes = post.likes -2
-        session[str(reply_id)][1] = "downVoted"
+    reply = Reply.query.get(reply_id)
+    #User that made the post
+    replyOwner = User.query.get(reply.user_id)
+    #Current User
+    user = User.query.get(current_user.id)
+    found = False
+
+    #Do this only if reply does not belong to user
+    if user.id != reply.user_id:
+        if user.reactions.count() > 0:
+            for react in user.reactions:
+                if react.post == reply.id:
+                    #If local user trys to unUpvote a reply (Take it out of database)
+                    if react.status == -1:
+                        found = True
+                        reply.likes = reply.likes + 1
+                        replyOwner.karma = replyOwner.karma + 1
+                        db.session.delete(react)
+                    #If local user trys to up vote a reply that is already downvote (Stays in database)
+                    elif react.status == 1:
+                        found = True
+                        react.status = -1
+                        replyOwner.karma = replyOwner.karma - 2
+                        reply.likes = reply.likes - 2
+        #If local user wants to upvote an unreacted to reply(Not in database yet, So add it)
+        if found == False:
+            newReaction = reactedReply(reply = reply.id, status = -1, user_id = user.id)
+            db.session.add(newReaction)
+            reply.likes = reply.likes - 1
+            replyOwner.karma = replyOwner.karma - 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('index', post=post.post))
+    return redirect(url_for('index', reply=reply))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

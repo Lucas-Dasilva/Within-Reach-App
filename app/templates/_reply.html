@@ -1,45 +1,80 @@
-
 <div>
     <table class = "posttable">
+            <!-- tr is Columns, td is Rows -->
+            <tr> 
+                <td colspan="3"><div class="posttitle"> {{reply.title}} </div>
+                </td>
+            </tr>
             <tr>
-    
                 <td class ="postbody" width= "80%">
-                    <!--  (milestone 1) TODO: include post body -->  
                     <div class="postbody">{{reply.body}}</div>
                     <br>
-                    <div class="posttime">Posted at: {{ moment(reply.timestamp).format('LLL')}}</div>
+                    <div class="posttime">{{ moment(reply.timestamp).format('LLL')}}</div>
                 </td>
                 <td class ="likeImg" width = "5%">
-                {% set repId = "r"+ (reply.id|string)%}
-                {% if repId in session %}
-                    {% if session[repId] == "upVoted" %}
-                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowUp.png' )}}"  width="50"> </a>
+                    <!-- If the reply belongs to local user then display an upvoted version(Unclickable) -->
+                    {% if reply.user_id == current_user.id %}
+                        <br>
+                        <img class = "like" src="{{ url_for('static', filename = 'clickedArrowUp.png' )}}"  width="50">
                         <br>
                         <div class="likecount">{{reply.likes}}</div>
-                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                        <img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50">
                         <br>
-
-                    {% elif session[repId] == "downVoted" %}
-                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
-                        <br>
-                        <div class="likecount">{{reply.likes}}</div>
-                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowDown.png' )}}"  width="50"> </a>
-                        <br>
+                    <!-- If reply belongs to other users, this user then local user can react -->
                     {% else %}
-                        <a href="{{ url_for('upVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
-                        <br>
-                        <div class="likecount">{{reply.likes}}</div>
-                        <a href="{{ url_for('downVote',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
-
+                        <!-- Scroll through reply that user has reacted to and match with current post -->
+                        {% if totalReactions > 0 %}
+                            {% for reaction in user.reactions %}
+                                {% if reaction.reply == reply.id %}
+                                    <!-- If they have upvoted it display green up arrow -->
+                                    {% if reaction.status == 1 %}
+                                        <br>
+                                        <a href="{{ url_for('upVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowUp.png' )}}"  width="50"> </a>
+                                        <br>
+                                        <div class="likecount">{{reply.likes}}</div>
+                                        <a href="{{ url_for('downVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                                        <br>
+                                    <!-- If they have downvoted it display green down arrow -->
+                                    {% elif reaction.status == -1 %}
+                                        <br>
+                                        <a href="{{ url_for('upVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                                        <br>
+                                        <div class="likecount">{{reply.likes}}</div>
+                                        <a href="{{ url_for('downVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'clickedArrowDown.png' )}}"  width="50"> </a>
+                                        <br>
+                                    {% endif %}
+                                {% else %}
+                                    <br>
+                                    <a href="{{ url_for('upVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                                    <br>
+                                    <div class="likecount">{{reply.likes}}</div>
+                                    <a href="{{ url_for('downVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                                    <br>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <br>
+                            <a href="{{ url_for('upVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowUp.png' )}}"  width="50"> </a>
+                            <br>
+                            <div class="likecount">{{reply.likes}}</div>
+                            <a href="{{ url_for('downVoteReply',post_id=post.id) }}" width = "35" ><img class = "like" src="{{ url_for('static', filename = 'arrowDown.png' )}}"  width="50"> </a>
+                            <br>
+                        {% endif %}
+                        
                     {% endif %}
-                {%endif%}
-                    <form action="{{ url_for('comments',post_id=post.id) }}" method="get">
-                      <input type="submit" value="▶ comments" >
-                    </form>
+                    <br>
                     <br>
                 </td>
-               
+                <td width = "100%">
+                      {% if reply.user_id == current_user.id %}
+                          <form action="{{ url_for('delete', post_id = post.id) }}" method="post">
+                              <input class = "deletebutton" type="submit" value="⤫ 𝘿𝙀𝙇𝙀𝙏𝙀" >
+                          </form>
+                          <form action="{{ url_for('edit', post_id = post.id) }}" method="post">
+                              <input class = "editbutton" type="submit" value="✎ 𝙀𝘿𝙄𝙏" >
+                          </form>
+                      {% endif %}
+                </td>
             </tr>
-  
-        </table>
-    </div>
+    </table>
+</div>
