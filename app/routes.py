@@ -193,6 +193,8 @@ def downVote(post_id):
 def comments(post_id):
     #Original post to stay at the top
     post = Post.query.get(post_id)
+    user = User.query.get(current_user.id)
+    totalReactions = user.reactionsR.count()
     #Check if there any replies to the post
     if post.replies:
         for reply in post.replies:
@@ -212,7 +214,7 @@ def comments(post_id):
     else: 
         replys = Reply.query.order_by(Reply.timestamp.desc())
 
-    return render_template('comments.html', post= post, form = form, replys = replys.filter(post_id == Reply.post))
+    return render_template('comments.html', post= post, form = form, totalReactions = totalReactions, replys = replys.filter(post_id == Reply.post))
 
 #Allows user to like replies
 @app.route('/replyLike/<reply_id>', methods=['GET'])
@@ -356,3 +358,31 @@ def edit(post_id):
             flash('Post edited!')
             return redirect(url_for('index'))
     return render_template('edit.html', form = tempPost, thepost = thepost)
+
+# Delete reply
+@app.route('/deleteR/<reply_id>', methods=['POST', 'DELETE'])
+@login_required
+def deleteR(reply_id):
+    theReply = Reply.query.get(reply_id)
+    post = theReply.post
+    db.session.delete(theReply)
+    flash('Post deleted.')
+    db.session.commit()
+    return redirect(url_for('comments', post_id = post))
+
+#Edit reply
+@app.route('/editR/<reply_id>', methods=['GET', 'POST'])
+@login_required
+def editR(reply_id):
+    tempPost = ReplyForm()
+    theReply = Reply.query.get(reply_id)
+    post = theReply.post
+    db.session.delete(theReply)
+    if tempPost.validate_on_submit():
+        if (tempPost.body.data is not None):
+            newreply = Reply(body = tempPost.body.data, user_id = current_user.id, post = post)
+            db.session.add(newreply)
+            db.session.commit()
+            flash('Reply edited!')
+            return redirect(url_for('comments', post_id = post))
+    return render_template('edit.html', form = tempPost, thepost = theReply)

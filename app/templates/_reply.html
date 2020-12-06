@@ -67,10 +67,10 @@
                 </td>
                 <td width = "100%">
                       {% if reply.user_id == current_user.id %}
-                          <form action="{{ url_for('delete', post_id = post.id) }}" method="post">
+                          <form action="{{ url_for('deleteR', reply_id = reply.id) }}" method="post">
                               <input class = "deletebutton" type="submit" value="⤫ 𝘿𝙀𝙇𝙀𝙏𝙀" >
                           </form>
-                          <form action="{{ url_for('edit', post_id = post.id) }}" method="post">
+                          <form action="{{ url_for('editR', reply_id = reply.id) }}" method="post">
                               <input class = "editbutton" type="submit" value="✎ 𝙀𝘿𝙄𝙏" >
                           </form>
                       {% endif %}

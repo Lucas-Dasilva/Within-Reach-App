@@ -43,6 +43,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
     posts = db.relationship('Post', backref='writer', lazy='dynamic')
     reactions = db.relationship('reactedPost', backref='user', lazy='dynamic')
+    reactionsR = db.relationship('reactedReply', backref='user', lazy='dynamic')
 
 #Post that user has reacted to
 class reactedPost(db.Model):
