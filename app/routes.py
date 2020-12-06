@@ -40,17 +40,20 @@ def index():
     user = User.query.get(current_user.id)
     totalReactions = user.reactions.count()
     #if position has changed update User database location
-    if (session["latitude"] != user.latitude) or (session["longitude"] != user.longitude):
+    try: 
         user.latitude = session["latitude"]
         user.longitude = session["longitude"]
-        db.session.commit()
-    if 'latitude' in session:
         for p in Post.query.all():
-            if str(p.id) not in session:
-                calc_dist(p.id)
-    #Checks if location has already been received
-    if 'latitude' not in session:
-        return redirect(url_for("register"))
+            calc_dist(p.id)
+        db.session.commit()
+    except:
+        print("Unable to update session location")
+
+    if user.latitude:
+        for p in Post.query.all():
+            calc_dist(p.id)
+
+
         
     if request.method == 'POST':
         option = 1
@@ -89,8 +92,8 @@ def calc_dist(post_id):
 
     #Initializing dictionary with Tuple. 
     #Dict Key has value of (distance from post, if post is upVoted, downVoted, or None)
-    session[str(post_id)] = [distance, None]
-    
+    session[str(post_id)] = distance
+
     #add distance to the db colummn, in order to sort it out
     #print(distance)
     return render_template('index.html')

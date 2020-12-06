@@ -51,4 +51,5 @@ function geoFindMe() {
     });
   }
 }
-document.getElementById('find-me').addEventListener('click', geoFindMe);
+geoFindMe();
+// document.getElementById('find-me').addEventListener('click', geoFindMe);

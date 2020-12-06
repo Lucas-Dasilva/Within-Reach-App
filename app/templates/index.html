@@ -3,6 +3,10 @@
 {% block content %}
     <img src="{{ url_for('static', filename = 'logo3.gif' )}}" width="300" class = "images">
     <h1 class= "hometitle">Within Reach</h1>
+    <!-- Get New Location upon refresh -->
+    <p id="status"></p>
+    <script type="text/javascript" src="static/location.js"></script>
+
     {% if sortform %}
         <form action ="" method = 'POST'> 
             
@@ -17,8 +21,8 @@
     <div class = "postlist">
         {% for post in posts %}
             <!-- Only show posts within a certain mile radius -->
-            {% if session %}
-                {% if session[(post.id|string)][0] < 20 %}
+            {% if (post.id|string) in session %}
+                {% if session[(post.id|string)] < 20 %}
                     <div class="post-box">{% include '_post.html' %} </div>
                 {% endif%}
             {% else %}
