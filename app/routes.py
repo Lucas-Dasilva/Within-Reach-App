@@ -9,6 +9,8 @@ from app import app, db
 from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
 from app.models import Post, Reply, User, reactedPost,reactedReply
 from flask_login import current_user, login_user, logout_user, login_required
+from flask_cors import cross_origin
+
 # import requests, json
 
 
@@ -19,6 +21,7 @@ def initDB(*args, **kwargs):
     db.create_all()
 
 @app.route("/getLocation", methods = ['POST'])
+@cross_origin()
 def locationHandler():
     if request.method == 'POST':
         location = request.get_json()
@@ -26,14 +29,14 @@ def locationHandler():
     session['latitude'] = round(location['latitude'],7)
     session['longitude'] = round(location['longitude'],7)
 
-    return ("Everythings fine", 200)
+    return ("Everything is fine", 200)
 
 #Main home page: Sorts, only displays nearby posts@app.route('/', methods=['GET', 'POST'])
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
+@cross_origin()
 def index():
-    
     #yeetcount is number of posts
     postCount = Post.query.count()
     sortForm = SortForm()
@@ -53,13 +56,10 @@ def index():
         for p in Post.query.all():
             calc_dist(p.id)
 
-
-        
     if request.method == 'POST':
-        option = 1
-        #option = int(sortForm.sort.data)
-        print("option:", option)
-
+        # option = 1
+        option = int(sortForm.sort.data)
+        #print("option:", option)
         if (option == 1):
             posts = Post.query.order_by(Post.likes.desc())
         else:
@@ -101,6 +101,8 @@ def calc_dist(post_id):
 
 #Create Post: Creates new post
 @app.route('/postmsg', methods=['GET', 'POST'])
+@login_required
+@cross_origin()
 def createpost():
     
     tempPost = PostForm()
@@ -116,8 +118,9 @@ def createpost():
 
 
 #Allows user to like posts
-@app.route('/postLike/<post_id>', methods=['GET'])
-def upVote(post_id):
+@app.route('/postLike/<post_id>/<ref>', methods=['GET'])
+@login_required
+def upVote(post_id, ref):
     post = Post.query.get(post_id)
     #User that made the post
     postOwner = User.query.get(post.user_id)
@@ -151,13 +154,17 @@ def upVote(post_id):
             postOwner.karma = postOwner.karma + 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('index', post=post))
+    if ref == "1":
+        return redirect(url_for('comments', post_id=post_id))
+    else:
+        return redirect(url_for('index', post=post))
 
     
 
 #Allows users to dislike posts, if a post gets less than 5 likes then it gets deleted
-@app.route('/postDislike/<post_id>', methods=['GET'])
-def downVote(post_id):
+@app.route('/postDislike/<post_id>/<ref>', methods=['GET'])
+@login_required
+def downVote(post_id, ref):
     post = Post.query.get(post_id)
     #User that made the post
     postOwner = User.query.get(post.user_id)
@@ -190,19 +197,19 @@ def downVote(post_id):
             postOwner.karma = postOwner.karma - 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('index', post=post))
+    if ref == "1":
+        return redirect(url_for('comments', post_id=post_id))
+    else:
+        return redirect(url_for('index', post=post))
   
 @app.route('/postcomments/<post_id>', methods=['GET', 'POST'])
+@login_required
 def comments(post_id):
     #Original post to stay at the top
     post = Post.query.get(post_id)
     user = User.query.get(current_user.id)
     totalReactions = user.reactionsR.count()
     #Check if there any replies to the post
-    if post.replies:
-        for reply in post.replies:
-            if "r"+ str(reply.id) not in session:
-                session["r"+ str(reply.id)] = None
             
     form = ReplyForm()
     if form.validate_on_submit():
@@ -211,30 +218,32 @@ def comments(post_id):
             db.session.add(newreply)
             db.session.commit()
             flash('New Reply created!')
-            session["r"+ str(newreply.id)] = None
             replys = Reply.query.order_by(Reply.timestamp.desc())
 
     else: 
         replys = Reply.query.order_by(Reply.timestamp.desc())
 
-    return render_template('comments.html', post= post, form = form, totalReactions = totalReactions, replys = replys.filter(post_id == Reply.post))
+    return render_template('comments.html', post= post, user = user, form = form, totalReactions = totalReactions, replys = replys.filter(post_id == Reply.post))
 
 #Allows user to like replies
 @app.route('/replyLike/<reply_id>', methods=['GET'])
+@login_required
 def upVoteReply(reply_id):
     reply = Reply.query.get(reply_id)
     #User that made the reply
     replyOwner = User.query.get(reply.user_id)
     #Current User
     user = User.query.get(current_user.id)
+    post = reply.post
+
     found = False
     #Do this only if reply does not belong to user
     if user.id != reply.user_id:
         #Check if they have already reacted to other replies
-        if user.reactions.count() > 0:
-            for react in user.reactions:
+        if user.reactionsR.count() > 0:
+            for react in user.reactionsR:
                 #if current user has reacted to this post before
-                if react.post == reply.id:
+                if react.reply == reply.id:
                     #If local user trys to unUpvote a post (Take it out of database)
                     if react.status == 1:
                         found = True
@@ -255,23 +264,26 @@ def upVoteReply(reply_id):
             replyOwner.karma = replyOwner.karma + 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('index', reply=reply))
+    return redirect(url_for('comments', post_id = post))
 
 #Allows users to dislike replies, if a reply gets less than 5 likes then it gets deleted
 @app.route('/replyDislike/<reply_id>', methods=['GET'])
+@login_required
 def downVoteReply(reply_id):
     reply = Reply.query.get(reply_id)
     #User that made the post
     replyOwner = User.query.get(reply.user_id)
     #Current User
     user = User.query.get(current_user.id)
+    post = reply.post
+
     found = False
 
     #Do this only if reply does not belong to user
     if user.id != reply.user_id:
-        if user.reactions.count() > 0:
-            for react in user.reactions:
-                if react.post == reply.id:
+        if user.reactionsR.count() > 0:
+            for react in user.reactionsR:
+                if react.reply == reply.id:
                     #If local user trys to unUpvote a reply (Take it out of database)
                     if react.status == -1:
                         found = True
@@ -292,7 +304,7 @@ def downVoteReply(reply_id):
             replyOwner.karma = replyOwner.karma - 1
     db.session.commit()
     session.modified =  True
-    return redirect(url_for('index', reply=reply))
+    return redirect(url_for('comments', post_id=post))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

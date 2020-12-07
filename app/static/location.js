@@ -17,6 +17,7 @@ function geoFindMe() {
     status.textContent = '';
     // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
     //console.log(typeof(locationString));
+    
     callAjax(locationString);
   }
 
@@ -41,6 +42,7 @@ function geoFindMe() {
       data: location,
       dataType: "text",
       timeout: 5000,
+      crossDomain:true,
       success: function() { 
         console.log('Your Location: '+ location);
         // window.location.reload()
@@ -51,5 +53,5 @@ function geoFindMe() {
     });
   }
 }
+document.getElementById('find-me').addEventListener('click', geoFindMe);
 geoFindMe();
-// document.getElementById('find-me').addEventListener('click', geoFindMe);

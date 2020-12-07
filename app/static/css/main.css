@@ -1,6 +1,6 @@
 /* Home page */
 html{
-  background-image: url("Background2.jpg");
+  background-image: url("Background2Edited.jpg");
   display: contents;
   /* Center and scale the image nicely */
   height: 98%;
@@ -24,12 +24,16 @@ body {
 #submit.button{
   size: 1em;
 }
+.commentsPage{
+  display: block;
+  margin: auto;
+}
 
 .button {
   width : 65px;
   padding : 3px;    
   font-size: 16px;
-  margin : 5px;
+  margin : .25em;
   padding : 5px;
   border: 1px solid lightgray;
 }
@@ -43,51 +47,51 @@ body {
   width : 50px;
   padding : 3px;    
   font-size: 16px;
-  margin-left : 1%;
+  margin: .25em;
   padding : 5px;
   border: 1px solid lightgray;
-  position: fixed;
+  position: relative;
   background-color: #0E0240;
 }
 
 .homebutton:hover {
   background-color: #FF3366;
   color: white;
-  position: fixed;
+  position: relative;
 }
 
 .postbutton {
-  width : 110px;
-  padding : 3px;    
+  width : 10em;
+  padding : 1em;    
   font-size: 16px;
-  margin-left : 6%;
+  margin: .25em;
   padding : 5px;
   border: 1px solid lightgray;
-  position: fixed;
+  position: relative;
   background-color: #0E0240;
 }
 
 .postbutton:hover {
   background-color: #FF3366;
   color: white;
-  position: fixed;
+  position: relative;
 }
 
 .logbutton {
-  width : 65px;
+  width : 10em;
   padding : 3px;    
   font-size: 16px;
-  margin-left : 15.5%;
+  margin: .25em;
   padding : 5px;
   border: 1px solid lightgray;
-  position: fixed;
+  position: relative;
   background-color: #0E0240;
 }
 
 .logbutton:hover {
   background-color: #FF3366;
   color: white;
-  position: fixed;
+  position: relative;
 }
 
 .loginbutton {
@@ -95,7 +99,7 @@ body {
   width : 85px;
   padding : 3px;    
   font-size: 20px;
-  margin : 5px;
+  margin : .25em;
   padding : 5px;
   border: 1px solid lightgray;
   align-items: center;
@@ -109,22 +113,22 @@ body {
 .commentbutton {
   text-align: center;
   margin-top: .1em;
-  color:#a96fff; 
+  color:#0E0240; 
   border-radius: 0.5em;
-  background-color: rgb(23, 240, 240); 
+  background-color: rgb(116, 74, 233); 
 }
 
 .commentbutton:hover {
   color: #0E0240;
-  background-color :rgb(116, 74, 233); 
+  background-color : #64FFDA;
 }
 
 .deletebutton {
   text-align: center;
   margin-top: .1em;
-  color:#a96fff; 
+  color:#0E0240; 
   border-radius: 0.5em;
-  background-color: rgb(23, 240, 240); 
+  background-color: rgb(116, 74, 233); 
 }
 /* old color: 8C3EFF */
 .deletebutton:hover {
@@ -135,9 +139,9 @@ body {
 .editbutton {
   text-align: center;
   margin-top: .1em;
-  color:#a96fff; 
+  color:#0E0240; 
   border-radius: 0.5em;
-  background-color: rgb(23, 240, 240); 
+  background-color: rgb(116, 74, 233); 
 }
 
 .editbutton:hover {
@@ -146,7 +150,9 @@ body {
 }
 
 
-
+.mainTitle{
+  position: fixed;
+}
 /* Titles */
 .title{
   padding-left: .25em;
@@ -194,6 +200,13 @@ body {
   color: #fff;
   margin-left: 25%;
 }
+.homeLogo{
+  width: 120px;
+  margin-left: 40%;
+  position: fixed;
+
+
+}
 
 a{
   text-decoration: none;
@@ -213,12 +226,13 @@ a:hover {
 }
 
 .posttable {
-  margin-top: 1em;
+ 
   color:#a96fff; 
   border-radius: 1em;
   background-color:#0E0240;
-  margin-left: 65%;
   width: 600px;
+  margin: auto;
+  margin-top: 1em;
 }
 
 .postbody{
@@ -262,6 +276,7 @@ a:hover {
   font-size: 14px;
   height: 32px;
   text-transform: uppercase;
+  position: fixed;
 }
 
 
@@ -278,16 +293,6 @@ a:hover {
 .likecount{
   margin-left: 1.23em;
   font-weight: bold;
-}
-
-
-
-/* GIF */
-.images {
-  width: 120px;
-  margin-left: 40%;
-  position: fixed;
-  margin-top: -3%;
 }
 
 
@@ -332,9 +337,9 @@ a:hover {
 .currentuser{
   color : white; 
   font-size: 16px;
-  position: fixed;
-  margin-left: 0.2%;
-  margin-top: 3%;
+  position: relative;
+  /* margin-left: 0.2%; */
+  /* margin-top: 3%; */
   border: 1px solid lightgray;
   padding: 5px;
   background-color: #0E0240;

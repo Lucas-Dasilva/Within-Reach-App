@@ -22,9 +22,7 @@ class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(1500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    likes = db.Column(db.Integer, default=0)
-    liked = db.Column(db.Boolean, default=False, nullable=False)
-    disliked = db.Column(db.Boolean, default=False, nullable=False)
+    likes = db.Column(db.Integer, default=1)
     post = db.Column(db.Integer, db.ForeignKey('post.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 

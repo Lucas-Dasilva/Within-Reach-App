@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <img src="{{ url_for('static', filename = 'logo3.gif' )}}" width="300" class = "images">
+
+    <img class = "homeLogo" src="{{ url_for('static', filename = 'logo3.gif' )}}" >
     <h1 class= "hometitle">Within Reach</h1>
+
     <!-- Get New Location upon refresh -->
     <p id="status"></p>
     <script type="text/javascript" src="static/location.js"></script>
@@ -22,11 +24,11 @@
         {% for post in posts %}
             <!-- Only show posts within a certain mile radius -->
             {% if (post.id|string) in session %}
-                {% if session[(post.id|string)] < 20 %}
-                    <div class="post-box">{% include '_post.html' %} </div>
+                {% if session[(post.id|string)] < 10 %}
+                    <div class="posttable">{% include '_post.html' %} </div>
                 {% endif%}
             {% else %}
-                <div class="post-box">{% include '_post.html' %} </div>
+                <div class="posttable">{% include '_post.html' %} </div>
             {% endif%}
         {% endfor %}
     </div>
