@@ -217,7 +217,7 @@ def comments(post_id):
             newreply = Reply(body = form.body.data, post = post_id, user_id = current_user.id)
             db.session.add(newreply)
             db.session.commit()
-            flash('New Reply created!')
+            #flash('New Reply created!')
             replys = Reply.query.order_by(Reply.timestamp.desc())
 
     else: 
@@ -398,6 +398,6 @@ def editR(reply_id):
             newreply = Reply(body = tempPost.body.data, user_id = current_user.id, post = post)
             db.session.add(newreply)
             db.session.commit()
-            flash('Reply edited!')
+            #flash('Reply edited!')
             return redirect(url_for('comments', post_id = post))
     return render_template('edit.html', form = tempPost, thepost = theReply)
