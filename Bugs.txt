@@ -7,3 +7,28 @@
     if user_id == post_id
       do green button check and link to route with if conditions
     if the user is not the 
+
+
+            <!-- Only show posts within a certain mile radius -->
+            <!-- {% if (post.id|string) in session %}
+                {% if session[(post.id|string)] < 10 %}
+                    <div class="posttable">{% include '_post.html' %} </div>
+                {% endif%} -->
+            <!-- if the user has deleted the cache but the distance is still saved in db -->
+            <!-- If the post belongs to current user or all the posts distances from user is less than 5 -->
+
+
+                    {% for dist in distance %}
+            {% if (dist.user_id == current_user.id) %}
+                <div class="posttable">{% include '_post.html' %} </div>
+            {% endif%}
+        {% endfor %}
+
+            {% if (post.user_id == current_user.id) %}
+                <div class="posttable">{% include '_post.html' %} </div>
+            {% endif%}
+            {% for dist in userDist %}
+                {% if (dist.distance < 5.0|float) %}
+                    <div class="posttable">{% include '_post.html' %} </div>
+                {% endif%}
+            {% endfor %}

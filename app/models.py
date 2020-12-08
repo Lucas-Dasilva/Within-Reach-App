@@ -13,10 +13,21 @@ class Post(db.Model):
     likes = db.Column(db.Integer, default= 1)
     latitude = db.Column(db.String(1500))
     longitude = db.Column(db.String(1500))
-    replies = db.relationship('Reply', backref='replypost', lazy='dynamic')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     def repr(self):
         return '<Post {}-{} >'.format(self.id,self.body)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    replies = db.relationship('Reply', backref='replypost', lazy='dynamic')
+    distance_from_user = db.relationship('userDistance',back_populates='_post') 
+
+class userDistance(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), primary_key=True)
+    distance = db.Column(db.Float)
+    _user = db.relationship('User')
+    _post = db.relationship('Post')
+    def __repr__(self):
+        return '<UserDistance ({},{},{}) >'.format(self.user_id,self.post_id,self.distance)
+
 
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +53,9 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='writer', lazy='dynamic')
     reactions = db.relationship('reactedPost', backref='user', lazy='dynamic')
     reactionsR = db.relationship('reactedReply', backref='user', lazy='dynamic')
+    distance_from_post = db.relationship('userDistance',back_populates='_user') 
+
+
 
 #Post that user has reacted to
 class reactedPost(db.Model):

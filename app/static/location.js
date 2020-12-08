@@ -20,7 +20,6 @@ function geoFindMe() {
     
     callAjax(locationString);
   }
-
   function error(err) {
     status.textContent = 'Unable to retrieve your location'();
     console.error(err)

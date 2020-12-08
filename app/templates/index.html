@@ -26,11 +26,12 @@
             {% if (post.id|string) in session %}
                 {% if session[(post.id|string)] < 10 %}
                     <div class="posttable">{% include '_post.html' %} </div>
-                {% endif%}
+                {% endif %}
             {% else %}
                 <div class="posttable">{% include '_post.html' %} </div>
-            {% endif%}
+            {% endif %}
         {% endfor %}
+
     </div>
     
 {% endblock %}

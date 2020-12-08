@@ -7,7 +7,7 @@ from math import sin,cos, sqrt, atan2, radians
 
 from app import app, db
 from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
-from app.models import Post, Reply, User, reactedPost,reactedReply
+from app.models import Post, Reply, User, reactedPost,reactedReply, userDistance
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_cors import cross_origin
 
@@ -38,23 +38,21 @@ def locationHandler():
 @cross_origin()
 def index():
     #yeetcount is number of posts
+    
     postCount = Post.query.count()
     sortForm = SortForm()
     user = User.query.get(current_user.id)
     totalReactions = user.reactions.count()
     #if position has changed update User database location
+     
     try: 
         user.latitude = session["latitude"]
         user.longitude = session["longitude"]
         for p in Post.query.all():
-            calc_dist(p.id)
+            calc_dist(p.id,user)
         db.session.commit()
     except:
         print("Unable to update session location")
-
-    if user.latitude:
-        for p in Post.query.all():
-            calc_dist(p.id)
 
     if request.method == 'POST':
         # option = 1
@@ -66,11 +64,24 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm, user = user, totalReactions = totalReactions)
+    
+    # distance = userDistance.query.filter(userDistance.distance < 5.0)
+    userDist = user.distance_from_post
+    # for post in user.distance_from_post:
+    #     print(post.distance)
+    #     print(post._user)
+    #     print(post._post)
+    #     print(post.user_id)
+    #     print(post.post_id)
+        
+
+        
+
+    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm, user = user, totalReactions = totalReactions, userDist = userDist) 
 
 
 #Calculate Distance of user to other posts 
-def calc_dist(post_id):
+def calc_dist(post_id,user):
 
     #Radius of earth in miles
     R = 3958.8
@@ -93,9 +104,19 @@ def calc_dist(post_id):
     #Initializing dictionary with Tuple. 
     #Dict Key has value of (distance from post, if post is upVoted, downVoted, or None)
     session[str(post_id)] = distance
-
+    if post.user_id != user.id:
+        try:
+            assoc1 = userDistance(distance = distance)
+            assoc1._user = user
+            assoc1._post = post
+            db.session.add(assoc1)
+            db.session.commit()
+        except:
+            db.session.rollback()
     #add distance to the db colummn, in order to sort it out
     #print(distance)
+    
+ 
     return render_template('index.html')
 
 
