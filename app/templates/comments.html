@@ -6,9 +6,8 @@
 
     <h1 class="title">Reply to Post</h1>
     <br>
-
+    <div class = "mainPost">
     {% if post %}
-
             <table class = "posttable">
                 <!-- tr is Columns, td is Rows -->
                 <tr> 
@@ -82,6 +81,7 @@
                 </tr>
             </table>
     {% endif %}
+    </div>
 
     
     {% if form %}
@@ -99,7 +99,7 @@
     {% endif %}
   
     <div class = "postlist">{% for reply in replys %} </div>
-        <div class="posttable">{% include '_reply.html' %} </div>
+        <div class="mainPost">{% include '_reply.html' %} </div>
     {% endfor %}
 </div>
 {% endblock %}
