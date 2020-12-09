@@ -4,6 +4,7 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request, session
 from flask_sqlalchemy import sqlalchemy
 from math import sin,cos, sqrt, atan2, radians
+from sqlalchemy import func
 
 from app import app, db
 from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
@@ -39,12 +40,11 @@ def locationHandler():
 def index():
     #yeetcount is number of posts
     
-    postCount = Post.query.count()
     sortForm = SortForm()
     user = User.query.get(current_user.id)
     totalReactions = user.reactions.count()
-    #if position has changed update User database location
-     
+
+    #if position has changed update User database location     
     try: 
         user.latitude = session["latitude"]
         user.longitude = session["longitude"]
@@ -53,6 +53,8 @@ def index():
         db.session.commit()
     except:
         print("Unable to update session location")
+    #Get the post with the most number of likes
+    topPost = db.session.query(func.max(Post.likes)).scalar()
 
     if request.method == 'POST':
         # option = 1
@@ -64,20 +66,8 @@ def index():
             posts = Post.query.order_by(Post.timestamp.desc())
     else: 
         posts = Post.query.order_by(Post.timestamp.desc())
-    
-    # distance = userDistance.query.filter(userDistance.distance < 5.0)
-    userDist = user.distance_from_post
-    # for post in user.distance_from_post:
-    #     print(post.distance)
-    #     print(post._user)
-    #     print(post._post)
-    #     print(post.user_id)
-    #     print(post.post_id)
-        
 
-        
-
-    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm, user = user, totalReactions = totalReactions, userDist = userDist) 
+    return render_template('index.html', title="Welcome to Within Reach", posts= posts, postCount =  posts.count(), sortform = sortForm, user = user, totalReactions = totalReactions, topPost = topPost) 
 
 
 #Calculate Distance of user to other posts 
@@ -101,18 +91,21 @@ def calc_dist(post_id,user):
 
     distance = R * c
 
-    #Initializing dictionary with Tuple. 
     #Dict Key has value of (distance from post, if post is upVoted, downVoted, or None)
     session[str(post_id)] = distance
     if post.user_id != user.id:
         try:
-            assoc1 = userDistance(distance = distance)
-            assoc1._user = user
-            assoc1._post = post
-            db.session.add(assoc1)
+            dist = userDistance(distance = distance)
+            dist._user = user
+            dist._post = post
+            db.session.add(dist)
             db.session.commit()
         except:
             db.session.rollback()
+    # for p in userDistance.query.all():
+    #     if p.id != :
+    #         p.distance = 3.4
+    #         db.session.commit()
     #add distance to the db colummn, in order to sort it out
     #print(distance)
     
@@ -373,6 +366,13 @@ def logout():
 @login_required
 def delete(post_id):
     thepost = Post.query.get(post_id)
+    allPosts = userDistance.query.all()
+    for post in allPosts:
+
+        if post.post_id == int(post_id):
+            db.session.delete(post)
+            db.session.commit()
+
     db.session.delete(thepost)
     flash('Post deleted.')
     db.session.commit()

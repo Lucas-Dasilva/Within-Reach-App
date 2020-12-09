@@ -28,6 +28,7 @@
                 {% else %}
                     <td><a href="{{ url_for('logout') }}" class = "logbutton"> Logout </a></td>
                     <td class = "currentuser"> Current user: <span class="useritem">{{ current_user.username }} </span></td>
+                    <td class = "currentkarma"> Karma: <span class="useritem">{{ current_user.karma }} </span></td>
                 {% endif %}
             </tr>
         </table>

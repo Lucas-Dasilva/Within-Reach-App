@@ -200,6 +200,15 @@ body {
   color: #fff;
   margin-left: 25%;
 }
+.topPostTitle{
+  margin-top: 3em;
+  text-align: center;
+  width: 40%;
+  text-shadow: 2px 4px 20px #924DF9;
+  color: #fff;
+  margin-left: 56%;
+  position: fixed;
+}
 .homeLogo{
   width: 120px;
   margin-left: 40%;
@@ -224,13 +233,20 @@ a:hover {
 .postlabel{
   color:#FF3366;
 }
-
+.topPost{
+  color:#a96fff; 
+  border-radius: 1em;
+  background-color:#0E0240;
+  width: 20em;
+  margin-left: 30em;
+  margin-top: -7em;
+}
 .posttable {
  
   color:#a96fff; 
   border-radius: 1em;
   background-color:#0E0240;
-  width: 600px;
+  width: inherit;
   margin: auto;
   margin-top: 1em;
 }
@@ -245,7 +261,11 @@ a:hover {
   font-size: 12px;
   padding: .5em;
 }
+.mainPost{
+  margin: auto;
+  width: 35em;
 
+}
 .postlist{
   display: block;
   align-items: center;
@@ -337,9 +357,14 @@ a:hover {
 .currentuser{
   color : white; 
   font-size: 16px;
-  position: relative;
-  /* margin-left: 0.2%; */
-  /* margin-top: 3%; */
+  border: 1px solid lightgray;
+  padding: 5px;
+  background-color: #0E0240;
+  margin-right: 5em;
+}
+.currentkarma{
+  color : white; 
+  font-size: 16px;
   border: 1px solid lightgray;
   padding: 5px;
   background-color: #0E0240;
@@ -348,21 +373,28 @@ a:hover {
 
 
 /* Window size adjustment */
-@media screen and (min-width: 1200px) {
-  .post-box{
-      width: 32%;
-  } 
+@media screen and (max-width: 1200px) {
+  .mainPost{
+    margin: auto;
+    width: 28em;
+  }
 }
 @media screen and (min-width: 800px) and (max-width:1200px){
-  .post-box{
-      width: 48%;
-  } 
+  .mainPost{
+    margin: auto;
+    width: 15em;
+  }
+  .topPostTitle{
+    position: relative;
+    width: 15em;
+  }
 }
 
 @media screen and (max-width:800px){
-  .post-box{
-      width: 99%;
-  } 
+  .mainPost{
+    margin: auto;
+    width: 10em;
+  }
 }
 
 

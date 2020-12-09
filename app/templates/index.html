@@ -21,16 +21,35 @@
     {% endif %}
 
     <div class = "postlist">
+        <!-- Fail safe check if local user cleared there cache, simply use the values in the userDistace Db instead -->
         {% for post in posts %}
-            <!-- Only show posts within a certain mile radius -->
-            {% if (post.id|string) in session %}
-                {% if session[(post.id|string)] < 10 %}
-                    <div class="posttable">{% include '_post.html' %} </div>
-                {% endif %}
-            {% else %}
-                <div class="posttable">{% include '_post.html' %} </div>
-            {% endif %}
+            {% if (post.id == topPost) %}
+                <div class = "topPostTitle">
+                    <h1>Top Post: </h1>
+                    <div class="topPost">{% include '_post.html' %} </div>
+                </div>
+            {% endif%}
         {% endfor %}
+        {% if "latitude" in session %}
+            {% for post in posts %}
+                {% if (post.id|string) in session %}
+                    {% if session[(post.id|string)] < 5|float %}
+                    <div class="mainPost">{% include '_post.html' %} </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for post in posts %}
+                {% if (post.user_id == current_user.id) %}
+                    <div class="mainPost">{% include '_post.html' %} </div>
+                {% endif%}
+                {% for dist in post.distance_from_user %}
+                    {% if dist.user_id == current_user.id and dist.distance < 5.0|float %}
+                        <div class="mainPost">{% include '_post.html' %} </div>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
 
     </div>
     

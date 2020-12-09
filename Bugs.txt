@@ -8,7 +8,7 @@
       do green button check and link to route with if conditions
     if the user is not the 
 
-
+{% comment %} 
             <!-- Only show posts within a certain mile radius -->
             <!-- {% if (post.id|string) in session %}
                 {% if session[(post.id|string)] < 10 %}
@@ -31,4 +31,4 @@
                 {% if (dist.distance < 5.0|float) %}
                     <div class="posttable">{% include '_post.html' %} </div>
                 {% endif%}
-            {% endfor %}
+            {% endfor %} {% endcomment %}

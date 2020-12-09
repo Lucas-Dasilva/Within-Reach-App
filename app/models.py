@@ -17,7 +17,7 @@ class Post(db.Model):
     def repr(self):
         return '<Post {}-{} >'.format(self.id,self.body)
     replies = db.relationship('Reply', backref='replypost', lazy='dynamic')
-    distance_from_user = db.relationship('userDistance',back_populates='_post') 
+    distance_from_user = db.relationship('userDistance',back_populates='_post', lazy = 'dynamic') 
 
 class userDistance(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -53,7 +53,7 @@ class User(UserMixin, db.Model):
     posts = db.relationship('Post', backref='writer', lazy='dynamic')
     reactions = db.relationship('reactedPost', backref='user', lazy='dynamic')
     reactionsR = db.relationship('reactedReply', backref='user', lazy='dynamic')
-    distance_from_post = db.relationship('userDistance',back_populates='_user') 
+    distance_from_post = db.relationship('userDistance',back_populates='_user', lazy = 'dynamic') 
 
 
 
