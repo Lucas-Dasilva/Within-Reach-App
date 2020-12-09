@@ -23,7 +23,7 @@
     <div class = "postlist">
         <!-- Fail safe check if local user cleared there cache, simply use the values in the userDistace Db instead -->
         {% for post in posts %}
-            {% if (post.id == topPost) %}
+            {% if (post.likes == topPost) %}
                 <div class = "topPostTitle">
                     <h1>Top Post: </h1>
                     <div class="topPost">{% include '_post.html' %} </div>
