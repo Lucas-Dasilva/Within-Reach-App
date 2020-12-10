@@ -30,7 +30,7 @@
         {% if "latitude" in session %}
             {% for post in posts %}
                 {% if (post.id|string) in session %}
-                    {% if session[(post.id|string)] < 5|float %}
+                    {% if session[(post.id|string)] < 15.0|float %}
                     <div class="mainPost">{% include '_post.html' %} </div>
                     {% endif %}
                 {% endif %}
@@ -41,7 +41,7 @@
                     <div class="mainPost">{% include '_post.html' %} </div>
                 {% endif%}
                 {% for dist in post.distance_from_user %}
-                    {% if dist.user_id == current_user.id and dist.distance < 5.0|float %}
+                    {% if dist.user_id == current_user.id and dist.distance < 15.0|float %}
                         <div class="mainPost">{% include '_post.html' %} </div>
                     {% endif %}
                 {% endfor %}
