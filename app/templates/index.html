@@ -5,10 +5,6 @@
     <img class = "homeLogo" src="{{ url_for('static', filename = 'logo3.gif' )}}" >
     <h1 class= "hometitle">Within Reach</h1>
 
-    <!-- Get New Location upon refresh -->
-    <p id="status"></p>
-    <script type="text/javascript" src="static/location.js"></script>
-
     {% if sortform %}
         <form action ="" method = 'POST'> 
             
@@ -21,15 +17,16 @@
     {% endif %}
 
     <div class = "postlist">
-        <!-- Fail safe check if local user cleared there cache, simply use the values in the userDistace Db instead -->
+        <!-- Display top most if max number of likes matches post with that likes -->
         {% for post in posts %}
             {% if (post.likes == topPost) %}
-                <div class = "topPostTitle">
-                    <h1>Top Post: </h1>
+                <div class = "topPostContainer">
+                    <h1 class = "topPostTitle">Top Post: </h1>
                     <div class="topPost">{% include '_post.html' %} </div>
                 </div>
             {% endif%}
         {% endfor %}
+        <!-- Fail safe check if local user cleared there cache, simply use the values in the userDistace Db instead -->
         {% if "latitude" in session %}
             {% for post in posts %}
                 {% if (post.id|string) in session %}

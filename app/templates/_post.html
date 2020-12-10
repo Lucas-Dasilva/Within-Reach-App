@@ -1,10 +1,12 @@
 <div>
     <table class = "posttable">
             <!-- tr is Columns, td is Rows -->
-            <tr> 
-                <td colspan="3"><div class="posttitle"> {{post.title}} </div>
-                </td>
-            </tr>
+            {% if post.user_id == current_user.id %}
+                <tr> 
+                    <td colspan="3"><div class="posttitle"> Posted by You </div>
+                    </td>
+                </tr>
+            {% endif %}
             <tr>
                 <td class ="postbody" width= "80%">
                     <div class="postbody">{{post.body}}</div>

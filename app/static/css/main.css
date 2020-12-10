@@ -10,9 +10,11 @@ html{
   background-attachment: fixed;
   background-size: cover;
   backdrop-filter: blur(5px);
+  z-index: -1;
 }
 
 body {
+  color: transparent;
   padding: 0px;
   font-family: Tahoma;
   text-align: center;
@@ -96,16 +98,29 @@ body {
 
 .loginbutton {
   background-color: whitesmoke;
-  width : 85px;
-  padding : 3px;    
+  width : 7em;
+  padding : .5em;    
   font-size: 20px;
   margin : .25em;
-  padding : 5px;
   border: 1px solid lightgray;
   align-items: center;
 }
 
 .loginbutton:hover {
+  background-color: #FF3366;
+  color: white;
+}
+.locationbutton {
+  background-color: whitesmoke;
+  width : 10em;
+  padding : .5em;    
+  font-size: 20px;
+  margin : .25em;
+  border: 1px solid lightgray;
+  align-items: center;
+}
+
+.locationbutton:hover {
   background-color: #FF3366;
   color: white;
 }
@@ -176,7 +191,7 @@ body {
   border-radius: 1em;
   padding: .1em;
   font-family: 'Dosis', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 24px;
+  font-size: 20px;
   text-align: center;
   font-weight: bold;
 }
@@ -200,14 +215,28 @@ body {
   color: #fff;
   margin-left: 25%;
 }
-.topPostTitle{
-  margin-top: 3em;
+.topPostContainer{
+  margin-top: 2em;
   text-align: center;
   width: 40%;
   text-shadow: 2px 4px 20px #924DF9;
   color: #fff;
-  margin-left: 56%;
+  padding-left: 0;
+  right: 5em;
   position: fixed;
+  z-index: -2;
+}
+.topPostTitle{
+  z-index: -2;
+}
+.topPost{
+  color:#a96fff; 
+  border-radius: 1em;
+  background-color:#0E0240;
+  width: 20em;
+  margin-left: 30em;
+  margin-top: -7em;
+  z-index: 3;
 }
 .homeLogo{
   width: 120px;
@@ -233,25 +262,18 @@ a:hover {
 .postlabel{
   color:#FF3366;
 }
-.topPost{
-  color:#a96fff; 
-  border-radius: 1em;
-  background-color:#0E0240;
-  width: 20em;
-  margin-left: 30em;
-  margin-top: -7em;
-}
 .posttable {
  
-  color:#a96fff; 
   border-radius: 1em;
   background-color:#0E0240;
   width: inherit;
   margin: auto;
   margin-top: 1em;
+  z-index: 3;
 }
 
 .postbody{
+  color:#a96fff; 
   font-size: 16px;
   padding:.5em;
   margin-bottom: 2em;
@@ -311,6 +333,7 @@ a:hover {
 }
 
 .likecount{
+  color:#a96fff; 
   margin-left: 1.23em;
   font-weight: bold;
 }

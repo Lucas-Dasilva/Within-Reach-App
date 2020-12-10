@@ -44,10 +44,15 @@ def index():
     user = User.query.get(current_user.id)
     totalReactions = user.reactions.count()
 
-    #if position has changed update User database location     
+    #if position has changed update User database location 
+    # session is float, user and post model is string
+    if str(session["latitude"]) != user.latitude:
+        user.latitude = str(session["latitude"])
+        user.longitude = str(session["longitude"])
+        db.session.commit()
     try: 
-        user.latitude = session["latitude"]
-        user.longitude = session["longitude"]
+        user.latitude = str(session["latitude"])
+        user.longitude = str(session["longitude"])
         for p in Post.query.all():
             calc_dist(p.id,user)
         db.session.commit()
