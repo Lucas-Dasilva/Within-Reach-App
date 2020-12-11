@@ -12,6 +12,8 @@
                     <div class="postbody">{{post.body}}</div>
                     <br>
                     <div class="posttime">{{ moment(post.timestamp).fromNow() }}</div>
+                    <div class="posttime">Distance from you: {{ session[(post.id|string)] }}</div>
+
                 </td>
                 <td class ="likeImg" width = "5%">
                     <!-- If the post belongs to local user then display an upvoted version(Unclickable) -->
