@@ -456,7 +456,7 @@ def calc_dist(post_id,user):
     session[str(post_id)] = distance
     if post.user_id != user.id:
         try:
-            dist = userDistance(distance = distance)
+            dist = 2
             dist._user = user
             dist._post = post
             db.session.add(dist)
