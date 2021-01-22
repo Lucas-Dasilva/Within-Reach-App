@@ -316,6 +316,7 @@ def filterPosts(latitude,longitude, sort):
             objPost["distance"] = dist
             post_list.append(objPost)
     #Checking if there is enough posts in radius. Min=5 Posts
+    #Yep
     if (posts_whithin_reach <= 10):
         posts_whithin_reach = 0
         post_list = []
