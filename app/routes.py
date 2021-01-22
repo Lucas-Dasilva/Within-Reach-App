@@ -1,18 +1,19 @@
 from __future__ import print_function
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import render_template, flash, redirect, url_for, request, session
 from flask_sqlalchemy import sqlalchemy
-from math import sin,cos, sqrt, atan2, radians
+from math import sin,cos, sqrt, atan2, radians, asin, pi
+
 from sqlalchemy import func
 
 from app import app, db
 from app.forms import PostForm, SortForm, ReplyForm, LoginForm, RegistrationForm
-from app.models import Post, Reply, User, reactedPost,reactedReply, userDistance
+from app.models import Post, Reply, User, reactedPost,reactedReply
 from flask_login import current_user, login_user, logout_user, login_required
-from flask_cors import cross_origin
-
-# import requests, json
+import requests, json
+from flask_jsonpify import jsonify
+from app import moment
 
 
 
@@ -21,31 +22,385 @@ def initDB(*args, **kwargs):
     session.permanent = True
     db.create_all()
 
-@app.route("/getLocation", methods = ['POST'])
-@cross_origin()
-def locationHandler():
+
+######################
+####Post Handlers######
+######################
+@app.route('/createUser', methods=['POST'])
+def createUser():
     if request.method == 'POST':
-        location = request.get_json()
-    #Must be rounded to avoid calc_dist issues
-    session['latitude'] = round(location['latitude'],7)
-    session['longitude'] = round(location['longitude'],7)
+        jUser = request.get_json()
+        
+        if(User.query.get(jUser["user_id"])):
+            print("User already exists")
+            return ("User Already Exists", 200)
+        else:    
+            print("User Doesnt exists")
+            newuser = User(id = jUser["user_id"])
+            db.session.add(newuser)
+            db.session.commit()
+            return ("Ok", 200)
 
-    return ("Everything is fine", 200)
+#Create Post: Creates new post
+@app.route('/createPostHandler', methods=['POST'])
+def createPostHandler():
+    if request.method == 'POST':
+        jPost = request.get_json()
+        user_id = jPost['user_id']
+        postBody = jPost['post_body']
+        latitude = jPost['latitude']
+        longitude = jPost['longitude']
+        
+        newpost = Post(body = postBody, latitude = latitude,longitude = longitude, user_id = user_id)
+        db.session.add(newpost)
+        db.session.commit()
+    return ("Ok", 200)
 
+@app.route('/createReplyHandler', methods=['POST'])
+def createReplyHandler():
+    if request.method == 'POST':
+        jPost = request.get_json()
+        user_id = jPost['user_id']
+        postBody = jPost['post_body']
+        post = jPost['post']
+        
+        newpost = Reply(body = postBody, post = post, user_id = user_id)
+        db.session.add(newpost)
+        db.session.commit()
+        return ("Okay", 200)
+
+
+# @app.route("/getLocation", methods = ['POST'])
+# def locationHandler():
+#     if request.method == 'POST':
+#         location = request.get_json()
+#     #Must be rounded to avoid calc_dist issues
+#     session['latitude'] = round(location['latitude'],7)
+#     session['longitude'] = round(location['longitude'],7)
+#     return ("Okay", 200)
+
+@app.route("/upvoteHandler", methods = ['POST'])
+def upvoteHandler():
+    if request.method == 'POST':
+        reaction = request.get_json()
+        user_id = reaction['user_id']
+        post_id = reaction['post_id']
+        post = Post.query.get(post_id)
+        #User that made the post
+        postOwner = User.query.get(post.user_id)
+        #Current User
+        user = User.query.get(user_id)
+        found = False
+        #Do this only if post does not belong to user
+        if user.id != post.user_id:
+            #Check if they have already reacted to other posts
+            if user.reactions.count() > 0:
+                for react in user.reactions:
+                    #if current user has reacted to this post before
+                    if react.post == post.id:
+                        #If local user trys to unUpvote a post (Take it out of database)
+                        if react.status == 1:
+                            found = True
+                            post.likes = post.likes - 1
+                            postOwner.karma = postOwner.karma - 1
+                            db.session.delete(react)
+                        #If local user trys to up vote a post that is already downvote (Stays in database)
+                        elif react.status == -1:
+                            found = True
+                            react.status = 1
+                            postOwner.karma = postOwner.karma + 2
+                            post.likes = post.likes + 2
+            #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+            if found == False:
+                newReaction = reactedPost(post = post.id, status = 1, user_id = user.id)
+                db.session.add(newReaction)
+                post.likes = post.likes + 1
+                postOwner.karma = postOwner.karma + 1
+        db.session.commit()
+        session.modified =  True
+    return ("Okay", 200)
+
+@app.route("/downvoteHandler", methods = ['POST'])
+def downvoteHandler():
+    if request.method == 'POST':
+        reaction = request.get_json()
+        user_id = reaction['user_id']
+        post_id = reaction['post_id']
+        post = Post.query.get(post_id)
+        #User that made the post
+        postOwner = User.query.get(post.user_id)
+        #Current User
+        user = User.query.get(user_id)
+        found = False
+        #Do this only if post does not belong to user
+        if user.id != post.user_id:
+            if user.reactions.count() > 0:
+                for react in user.reactions:
+                    if react.post == post.id:
+                        #If local user trys to unUpvote a post (Take it out of database)
+                        if react.status == -1:
+                            found = True
+                            post.likes = post.likes + 1
+                            postOwner.karma = postOwner.karma + 1
+                            db.session.delete(react)
+                        #If local user trys to up vote a post that is already downvote (Stays in database)
+                        elif react.status == 1:
+                            found = True
+                            react.status = -1
+                            postOwner.karma = postOwner.karma - 2
+                            post.likes = post.likes - 2
+            #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+            if found == False:
+                newReaction = reactedPost(post = post.id, status = -1, user_id = user.id)
+                db.session.add(newReaction)
+                post.likes = post.likes - 1
+                postOwner.karma = postOwner.karma - 1
+        db.session.commit()
+        session.modified =  True
+    return ("Okay", 200)
+
+#Allows user to like replies
+@app.route("/upvotereplyHandler", methods = ['POST'])
+def upVoteReplyHandler():
+    if request.method == 'POST':
+        reaction = request.get_json()
+        user_id = reaction['user_id']
+        reply_id = reaction['reply_id']
+        reply = Reply.query.get(reply_id)
+        #User that made the post
+        replyOwner = User.query.get(reply.user_id)
+        #Current User
+        user = User.query.get(user_id)
+        found = False
+        #Do this only if reply does not belong to user
+        if user.id != reply.user_id:
+            #Check if they have already reacted to other replies
+            if user.reactionsR.count() > 0:
+                for react in user.reactionsR:
+                    #if current user has reacted to this post before
+                    if react.reply == reply.id:
+                        #If local user trys to unUpvote a post (Take it out of database)
+                        if react.status == 1:
+                            found = True
+                            reply.likes = reply.likes - 1
+                            replyOwner.karma = replyOwner.karma - 1
+                            db.session.delete(react)
+                        #If local user trys to up vote a post that is already downvote (Stays in database)
+                        elif react.status == -1:
+                            found = True
+                            react.status = 1
+                            replyOwner.karma = replyOwner.karma + 2
+                            reply.likes = reply.likes + 2
+            #If local user wants to upvote an unreacted to post(Not in database yet, So add it)
+            if found == False:
+                newReaction = reactedReply(reply = reply.id, post = reply.post, status = 1, user_id = user.id)
+                db.session.add(newReaction)
+                reply.likes = reply.likes + 1
+                replyOwner.karma = replyOwner.karma + 1
+        db.session.commit()
+    return ("Okay", 200)
+
+#Allows users to dislike replies, if a reply gets less than 5 likes then it gets deleted
+@app.route("/downvotereplyHandler", methods = ['POST'])
+def downVoteReplyHandler():
+    if request.method == 'POST':
+        reaction = request.get_json()
+        user_id = reaction['user_id']
+        reply_id = reaction['reply_id']
+        reply = Reply.query.get(reply_id)
+        #User that made the post
+        replyOwner = User.query.get(reply.user_id)
+        #Current User
+        user = User.query.get(user_id)
+        found = False
+        #Do this only if reply does not belong to user
+        if user.id != reply.user_id:
+            if user.reactionsR.count() > 0:
+                for react in user.reactionsR:
+                    if react.reply == reply.id:
+                        #If local user trys to unUpvote a reply (Take it out of database)
+                        if react.status == -1:
+                            found = True
+                            reply.likes = reply.likes + 1
+                            replyOwner.karma = replyOwner.karma + 1
+                            db.session.delete(react)
+                        #If local user trys to up vote a reply that is already downvote (Stays in database)
+                        elif react.status == 1:
+                            found = True
+                            react.status = -1
+                            replyOwner.karma = replyOwner.karma - 2
+                            reply.likes = reply.likes - 2
+            #If local user wants to upvote an unreacted to reply(Not in database yet, So add it)
+            if found == False:
+                newReaction = reactedReply(reply = reply.id, post = reply.post, status = -1, user_id = user.id)
+                db.session.add(newReaction)
+                reply.likes = reply.likes - 1
+                replyOwner.karma = replyOwner.karma - 1
+        db.session.commit()
+        session.modified =  True
+    return ("Okay", 200)
+
+
+######################
+####Get Requests######
+######################
+@app.route("/getUserKarma/<user_id>", methods = ['GET'])
+def getUserKarma(user_id):
+    if (User.query.get(user_id)):
+        user = User.query.get(user_id)
+        karma = user.karma
+        return jsonify(karma)
+    else:
+        return("User Not yet Created")
+
+#Posts whithin distance and sorted by time
+@app.route("/getPosts/<latitude>/<longitude>", methods = ['GET'])
+def getPosts(latitude, longitude):
+    return (filterPosts(latitude,longitude, 1))
+
+#Posts whithin distance and sorted by Likes
+@app.route("/getPostsSorted/<latitude>/<longitude>", methods = ['GET'])
+def getPostsSorted(latitude, longitude):
+    return (filterPosts(latitude,longitude, 0))
+
+
+@app.route("/getReplys/<post_id>", methods = ['GET'])
+def getReplys(post_id):
+    replys = Reply.query.filter(post_id == Reply.post)
+    replys = replys.order_by(Reply.timestamp.desc())  
+    jReplys = jsonify(reply_list=[i.serialize() for i in replys])
+    print(jReplys)
+    return (jReplys)
+        
+@app.route("/getSinglePost/<post_id>", methods = ['GET'])
+def getSinglePost(post_id):
+    post = Post.query.get(post_id)
+    jPosts = jsonify(post=[post.serialize()])
+    #print(jPosts)
+    return (jPosts)
+
+@app.route("/getReactions/<user_id>", methods = ['GET'])
+def getReactions(user_id):
+    reactions = reactedPost.query.filter(user_id == reactedPost.user_id)
+    jReact = jsonify(react_list=[i.serialize() for i in reactions])
+    #print(jReact)
+    return (jReact)
+
+@app.route("/getReplyReactions/<user_id>", methods = ['GET'])
+def getReplyReactions(user_id):
+    reactions = reactedReply.query.filter(user_id == reactedReply.user_id)
+    jReact = jsonify(react_list=[i.serialize() for i in reactions])
+    #print(jReact)
+    return (jReact)
+
+
+def filterPosts(latitude,longitude, sort):
+    #Sort posts by time
+    if (sort==1):
+        posts = Post.query.order_by(Post.timestamp.desc())
+    #Sort by likes
+    else:
+        posts = Post.query.order_by(Post.likes.desc())
+    post_list = []
+    #Posts that are in the distance radius
+    posts_whithin_reach = 0
+
+    #Scrolls through posts within a 1.5 mile to 10 mile radius
+    #depending on post volume, the geo-based radius can expand to a 10 mile ring
+    for i in posts:
+        dist = distance(i.latitude,i.longitude, latitude, longitude)
+        #1.5 Mile Radius
+        if(dist < 1.5):
+            posts_whithin_reach += 1
+            objPost = i.serialize()
+            objPost["distance"] = dist
+            post_list.append(objPost)
+    #Checking if there is enough posts in radius. Min=5 Posts
+    if (posts_whithin_reach <= 10):
+        posts_whithin_reach = 0
+        post_list = []
+        for i in posts:
+            dist = distance(i.latitude,i.longitude, latitude, longitude)
+            #Three Mile Radius
+            if(dist < 3):
+                posts_whithin_reach += 1
+                objPost = i.serialize()
+                objPost["distance"] = dist
+                post_list.append(objPost)   
+    #Checking if there still isn't enough posts, so expand the radius
+    if (posts_whithin_reach <= 10):
+        posts_whithin_reach = 0
+        post_list = []
+        for i in posts:
+            dist = distance(i.latitude,i.longitude, latitude, longitude)
+            #Five Mile Radius
+            if(dist < 5):
+                posts_whithin_reach += 1
+                objPost = i.serialize()
+                objPost["distance"] = dist
+                post_list.append(objPost)  
+    #If there is an abundance of posts, the delete the oldest ones 
+    if (posts_whithin_reach >= 25):
+         for i in posts:
+            #Check if post is older than 10 days
+            time_passed = datetime.utcnow() -  i.timestamp 
+            if (time_passed.days > 7):
+                deleteOldPost(i)
+    #Setting new Post list
+    if (post_list != []):
+        jPosts = jsonify(post_list = post_list)
+        return (jPosts)
+    else:
+        jPosts = jsonify(post_list = [])
+        return (jPosts)
+
+
+#Calc Distance for rest-api
+def distance(lat1, lon1, lat2, lon2): 
+    lat2 = float(lat2)
+    lon2 = float(lon2)
+    p = pi/180
+    a = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * cos(lat2*p) * (1-cos((lon2-lon1)*p))/2
+    dist= 7917.6 * asin(sqrt(a)) #2 * Radius of earth in miles(3958.8) * asin
+    # print("Distance:" + str(dist))
+    return round(dist, 2)
+
+# Delete post
+def deleteOldPost(post):
+    print("deleting post #" + str(post.id))
+    #Deleting reply reactions
+    for reaction in reactedReply.query.all():
+        if (reaction.post == post.id):
+            db.session.delete(reaction)
+    #Deleting replys
+    for reply in Reply.query.all():
+        if (reply.post == post.id):
+            db.session.delete(reply)
+    #Deleting post reactions
+    for reaction in reactedPost.query.all():
+        if (reaction.post == post.id):
+            db.session.delete(reaction)
+    #Deleting Posts
+    db.session.delete(post)
+    db.session.commit()
+
+
+
+######################
+####WebApp Code######
+######################
 #Main home page: Sorts, only displays nearby posts@app.route('/', methods=['GET', 'POST'])
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
-@cross_origin()
 def index():
     #yeetcount is number of posts
-    
     sortForm = SortForm()
     user = User.query.get(current_user.id)
     totalReactions = user.reactions.count()
 
     #if position has changed update User database location 
-    # session is float, user and post model is string
+    #session is float, user and post model is string
     if str(session["latitude"]) != user.latitude:
         user.latitude = str(session["latitude"])
         user.longitude = str(session["longitude"])
@@ -121,9 +476,7 @@ def calc_dist(post_id,user):
 #Create Post: Creates new post
 @app.route('/postmsg', methods=['GET', 'POST'])
 @login_required
-@cross_origin()
 def createpost():
-    
     tempPost = PostForm()
     if tempPost.validate_on_submit():
         if (tempPost.body.data is not None):
@@ -177,6 +530,8 @@ def upVote(post_id, ref):
         return redirect(url_for('comments', post_id=post_id))
     else:
         return redirect(url_for('index', post=post))
+
+   
 
     
 
