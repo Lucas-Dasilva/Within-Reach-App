@@ -244,40 +244,54 @@ def downVoteReplyHandler():
 ######################
 ####Get Requests######
 ######################
-@app.route("/getUserKarma/<user_id>", methods = ['GET'])
-def getUserKarma(user_id):
-    if (User.query.get(user_id)):
-        user = User.query.get(user_id)
-        karma = user.karma
-        return jsonify(karma)
-    else:
-        return("User Not yet Created")
+@app.route("/getUser/<user_id>", methods = ['GET'])
+def getUser(user_id):
+    if request.method == 'GET':
+        if (User.query.get(user_id)):
+            user = User.query.get(user_id)
+            return jsonify(user.serialize())
+        else:
+            return("User Not yet Created")
 
 #Posts whithin distance and sorted by time
-@app.route("/getPosts/<latitude>/<longitude>", methods = ['GET'])
-def getPosts(latitude, longitude):
-    return (filterPosts(latitude,longitude, 1))
+@app.route("/getPosts/<latitude>/<longitude>/<user_id>", methods = ['GET'])
+def getPosts(latitude, longitude, user_id):
+    if request.method == 'GET':
+        return (filterPosts(latitude,longitude, 1, user_id))
 
 #Posts whithin distance and sorted by Likes
-@app.route("/getPostsSorted/<latitude>/<longitude>", methods = ['GET'])
-def getPostsSorted(latitude, longitude):
-    return (filterPosts(latitude,longitude, 0))
+@app.route("/getPostsSorted/<latitude>/<longitude>/<user_id>", methods = ['GET'])
+def getPostsSorted(latitude, longitude, user_id):
+    if request.method == 'GET':
+        return (filterPosts(latitude,longitude, 0, user_id))
 
 
-@app.route("/getReplys/<post_id>", methods = ['GET'])
-def getReplys(post_id):
-    replys = Reply.query.filter(post_id == Reply.post)
-    replys = replys.order_by(Reply.timestamp.desc())  
-    jReplys = jsonify(reply_list=[i.serialize() for i in replys])
-    print(jReplys)
-    return (jReplys)
+@app.route("/getReplys/<post_id>/<user_id>", methods = ['GET'])
+def getReplys(post_id,user_id):
+    if request.method == 'GET':
+        #Get Single Post
+        post = Post.query.get(post_id)
+        post_reactions = reactedPost.query.filter(user_id == reactedPost.user_id)
+        #Get replys for for post
+        replys = Reply.query.filter(post_id == Reply.post) #Filtering out replys that belong to post
+        replys = replys.order_by(Reply.timestamp.desc()) #Sorting it by time
+        reactions = reactedReply.query.filter(user_id == reactedReply.user_id) #filtering reply reactions by local user
+        jReplys = jsonify(post=post.serialize(), 
+                        post_reactions=[i.serialize() for i in post_reactions],
+                        reply_list=[i.serialize() for i in replys],
+                        react_list=[i.serialize() for i in reactions])
+        return (jReplys)
         
-@app.route("/getSinglePost/<post_id>", methods = ['GET'])
-def getSinglePost(post_id):
-    post = Post.query.get(post_id)
-    jPosts = jsonify(post=[post.serialize()])
-    #print(jPosts)
-    return (jPosts)
+@app.route("/getSinglePost/<post_id>/<user_id>", methods = ['GET'])
+def getSinglePost(post_id, user_id):
+    if request.method == 'GET':
+        post = Post.query.get(post_id)
+        reactions = reactedPost.query.filter(user_id == reactedPost.user_id)
+        if(post):
+            jPosts = jsonify(post=[post.serialize()], react_list=[i.serialize() for i in reactions])
+            #print(jPosts)
+            return (jPosts)
+
 
 @app.route("/getReactions/<user_id>", methods = ['GET'])
 def getReactions(user_id):
@@ -294,7 +308,7 @@ def getReplyReactions(user_id):
     return (jReact)
 
 
-def filterPosts(latitude,longitude, sort):
+def filterPosts(latitude,longitude, sort, user_id):
     #Sort posts by time
     if (sort==1):
         posts = Post.query.order_by(Post.timestamp.desc())
@@ -347,12 +361,14 @@ def filterPosts(latitude,longitude, sort):
             time_passed = datetime.utcnow() -  i.timestamp 
             if (time_passed.days > 7):
                 deleteOldPost(i)
+    #Merging reaction list with posts
+    reactions = reactedPost.query.filter(user_id == reactedPost.user_id)
     #Setting new Post list
     if (post_list != []):
-        jPosts = jsonify(post_list = post_list)
+        jPosts = jsonify(post_list = post_list, react_list=[i.serialize() for i in reactions])
         return (jPosts)
     else:
-        jPosts = jsonify(post_list = [])
+        jPosts = jsonify(post_list = [], react_list=[i.serialize() for i in reactions])
         return (jPosts)
 
 
@@ -391,7 +407,6 @@ def deleteOldPost(post):
 ####WebApp Code######
 ######################
 #Main home page: Sorts, only displays nearby posts@app.route('/', methods=['GET', 'POST'])
-@app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
