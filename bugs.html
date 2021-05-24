@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Cancel Button -->
+    <ion-buttons slot="start">
+      <ion-button (click)="gotToHome()">
+        <ion-icon name="chevron-back-outline"></ion-icon>      
+      </ion-button>
+    </ion-buttons>
+    <!-- Create Post Label -->
+    <div class="centercontent">
+    <ion-label class="label">Comments</ion-label>
+    </div>
+    <!-- Send button -->
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="flag-outline"></ion-icon>      
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+
+
+<ion-content class="botContent">
+  <div class="topContent">
+    <!-- <div class="wrapper"> -->
+    <ion-card *ngIf="post" class='mainCard'>
+      <!-- Start of row -->
+      <ion-row class='mainRow'>
+        <!-- post body Column -->
+        <ion-col class="body">
+          {{post.body}}
+        </ion-col>
+        <!-- Vote Column -->
+        <ion-col class = "vote" size="2">
+          <app-vote-button [post_id]="post.id" [post_user]="post.user_id" [likes]="post.likes"></app-vote-button>
+        </ion-col>
+      </ion-row>
+      <!-- Start of bottom row -->
+      <ion-row size="1">
+        <ion-col size="5" class="time">
+          {{ post.timestamp| timeAgo }}
+        </ion-col>
+        <ion-col class="reply">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <div class="text">replys</div>
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
+
+  <!-- Create comments list -->
+  <ion-list *ngIf="replys$ | async as replys">
+    <!-- Start of forloop -->
+    <ion-card *ngFor="let reply of replys.reply_list" class='replyCard'>
+      <!-- Start of row -->
+      <ion-row>
+        <!-- post body Column -->
+        <ion-col class="body">
+          {{reply.body}}
+        </ion-col>
+        <!-- Vote Column -->
+        <ion-col class = "vote" size="2">
+          <app-reply-vote-button [post_id]="reply.id" [post_user]="reply.user_id" [likes]="reply.likes"></app-reply-vote-button>
+        </ion-col>
+      </ion-row>
+      <!-- Start of bottom row -->
+      <ion-row size="1">
+        <ion-col size="5" class="time">
+          {{ reply.timestamp| timeAgo }}
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </ion-list>
+
+  <!-- Loading Screen -->
+  <ng-template #loading>
+    <!-- {{presentLoading()}} -->
+    <!-- <ion-spinner name="crescent"></ion-spinner> -->
+  </ng-template>
+
+
+  <!-- Textarea -->
+
+</ion-content>
+<ion-footer>
+  <ion-toolbar class="footertoolbar">
+    <ion-input slot="start" inputmode="text" #autofocus autofocus="true" [(ngModel)]="replyBody" placeholder="Reply Back">
+    </ion-input>
+    <ion-buttons slot="end">
+      <ion-button (click)="sendReply()">
+        <ion-icon  name="arrow-undo-outline"></ion-icon>      
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>

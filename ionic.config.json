@@ -1,5 +1,7 @@
 {
   "name": "withinReachApp",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

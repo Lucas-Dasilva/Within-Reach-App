@@ -1,0 +1,28 @@
+<!-- If post belongs to local user -->
+<div *ngIf="owner==true else react" class="votebox">
+  <ion-icon 
+  name="chevron-up"
+  class='active up'>
+  </ion-icon>        
+  <div class="likecount">{{votecount}}</div>
+  <ion-icon 
+  name="chevron-down"
+  class="vote">
+  </ion-icon>        
+</div>
+<ng-template #react>
+  <div class="votebox">
+    <ion-icon 
+    name="chevron-up"
+    (click)="upVote()" 
+    [ngClass]="{'active up' : user_vote > 0}">
+    </ion-icon>  
+    <div class="likecount">{{votecount}}</div>
+    <ion-icon 
+    name="chevron-down"
+    (click)="downVote()" 
+    [ngClass]="{'active down' : user_vote < 0}">
+    </ion-icon>
+  </div>
+
+</ng-template>

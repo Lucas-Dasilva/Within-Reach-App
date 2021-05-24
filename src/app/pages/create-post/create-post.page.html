@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Cancel Button -->
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-label class="cancel">Cancel</ion-label>
+      </ion-button>
+    </ion-buttons>
+    <!-- Create Post Label -->
+    <div class="centercontent">
+    <ion-label class="label">Create Post</ion-label>
+    </div>
+    <!-- Send button -->
+    <ion-buttons slot="end">
+      <ion-button (click)="send()">
+        <ion-label class="send">Send</ion-label>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-textarea #autofocus autofocus="true" [(ngModel)]="postBody" placeholder="What do you wish to tell the world?"></ion-textarea>
+</ion-content>

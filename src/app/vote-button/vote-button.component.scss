@@ -1,0 +1,48 @@
+
+@media (prefers-color-scheme: light) {
+  .votebox {
+    display: flex;
+    flex-direction: column;
+    font-size: 2em;
+    align-items: center;
+    color: #DCE1E5;
+    
+  
+    .active.up {
+        color: #5600F7;
+      }
+  
+    .active.down {
+       color: #5600F7;
+     }
+  
+  }
+  .likecount{
+    font-size: .65em;
+    color: #5b7786;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .votebox {
+    display: flex;
+    flex-direction: column;
+    font-size: 2em;
+    align-items: center;
+    color: #555B62;
+    
+  
+    .active.up {
+      color: #6161BD;
+      }
+  
+    .active.down {
+      color: #6161BD;
+     }
+  
+  }
+  .likecount{
+    font-size: .6em;
+    color: #BCBBBE;
+  }
+}

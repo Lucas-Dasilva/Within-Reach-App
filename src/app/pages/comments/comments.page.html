@@ -1,0 +1,113 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Cancel Button -->
+    <ion-buttons slot="start">
+      <ion-button>
+        <ion-back-button defaultHref="home"text="" icon="chevron-back"></ion-back-button>
+        
+      </ion-button>
+    </ion-buttons>
+    <!-- Create Post Label -->
+    <div class="centercontent">
+    <ion-label class="label">Comments</ion-label>
+    </div>
+    <!-- Send button -->
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="flag-outline"></ion-icon>      
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+</ion-header>
+
+
+
+<ion-content *ngIf="replys$ | async as replys" class="botContent">
+  <div class="topContent">
+    <!-- <div class="wrapper"> -->
+    <ion-card  class='mainCard'>
+      <!-- Start of row -->
+      <ion-row class='mainRow'>
+        <!-- post body Column -->
+        <ion-col class="body">
+          {{replys.post.body}}
+        </ion-col>
+        <!-- Vote Column -->
+        <ion-col class = "vote" size="2">
+          <app-vote-button [reactions] ="replys.post_reactions" [post_id]="replys.post.id" [post_user]="replys.post.user_id" [likes]="replys.post.likes"></app-vote-button>
+        </ion-col>
+      </ion-row>
+      <!-- Start of bottom row -->
+      <ion-row size="1">
+        <ion-col size="5" class="time">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ replys.post.timestamp | datepipe }}        
+        </ion-col>
+        <!-- If reply counter is 0 -->
+        <ion-col *ngIf="replys.post.reply_count == 0" size="4" class="reply">
+          <ion-icon name="chatbubble-outline"></ion-icon>              
+          <div class="text">none</div>
+        </ion-col>
+        <!-- If reply counter is 1 -->
+        <ion-col *ngIf="replys.post.reply_count == 1" size="4" class="reply">
+          <ion-icon name="chatbubble-outline"></ion-icon>              
+          <div class="text">1 reply</div>
+        </ion-col>
+        <!-- If reply counter is greater than 1 -->
+        <ion-col *ngIf="replys.post.reply_count > 1" size="4" class="reply">
+          <ion-icon name="chatbubbles-outline"></ion-icon>              
+          <div class="text">{{replys.post.reply_count}} replies</div>
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </div>
+
+  <!-- Create comments list -->
+  <ion-list>
+    <!-- Start of forloop -->
+    <ion-card *ngFor="let reply of replys.reply_list" class='replyCard'>
+      <!-- Start of row -->
+      <ion-row>
+        <!-- post body Column -->
+        <ion-col class="body">
+          {{reply.body}}
+        </ion-col>
+        <!-- Vote Column -->
+        <ion-col class = "vote" size="2">
+          <app-reply-vote-button [reactions]="replys.react_list" [reply_id]="reply.id" [post_user]="reply.user_id" [likes]="reply.likes"></app-reply-vote-button>
+        </ion-col>
+      </ion-row>
+      <!-- Start of bottom row -->
+      <ion-row size="1">
+        <ion-col size="5" class="time">
+          {{ reply.timestamp | datepipe }}
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+        <ion-col class="reply">
+        </ion-col>
+      </ion-row>
+    </ion-card>
+  </ion-list>
+
+  <!-- Loading Screen -->
+  <ng-template #loading>
+    <!-- {{presentLoading()}} -->
+    <!-- <ion-spinner name="crescent"></ion-spinner> -->
+  </ng-template>
+
+
+  <!-- Textarea -->
+
+</ion-content>
+<ion-footer>
+  <ion-item lines="full">
+    <ion-input minlength="1" maxlength="500" autocorrect="on" autocomplete="on" inputmode="text" #autofocus autofocus="true" [(ngModel)]="replyBody" placeholder="Reply Back">
+    </ion-input>
+
+    <ion-button class="sendButton" (click)="sendReply()" type="submit"  expand="block" >Send</ion-button>
+  </ion-item>
+</ion-footer>

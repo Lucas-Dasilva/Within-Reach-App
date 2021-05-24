@@ -1,0 +1,105 @@
+<ion-header [translucent]="true">
+  <ion-toolbar mode="ios">
+
+    <ion-chip *ngIf="user$ |async as user" lines ="none" slot="start">
+      <ion-label>{{user.karma}}</ion-label>
+    </ion-chip>
+    <!-- Sorting -->
+    <ion-segment mode="ios" value="new" (ionChange)="sortPosts($event)">
+      <ion-segment-button value="new">
+        <ion-label>New</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="hot">
+        <ion-label>Hot</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Create post -->
+    <ion-buttons slot="end">
+      <ion-button (click)="createPost()">
+        <ion-icon name="create-outline"></ion-icon> 
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- Pulldown to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="circular"
+    >
+    </ion-refresher-content>
+  </ion-refresher>
+  <!-- Create Post list -->
+  <ion-list mode="ios" *ngIf="posts$ | async as posts">
+    <!-- Start of forloop -->
+    <ion-card *ngFor="let post of posts.post_list">
+      <!-- Start of row -->
+      <ion-row>
+        <!-- post body Column -->
+        <ion-col class="body" (click)="gotToComments(post.id)">
+          {{post.body}}
+        </ion-col>
+        <!-- Vote Column -->
+        <ion-col class = "vote" size="2">
+          <app-vote-button [reactions] ="posts.react_list" [post_id]="post.id" [post_user]="post.user_id" [likes]="post.likes"></app-vote-button>
+        </ion-col>
+      </ion-row>
+      <!-- Start of bottom row -->
+      <ion-footer mode="ios">
+        <ion-grid>
+          <ion-row>
+            <!-- time column -->
+            <ion-col size="4" class="time">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ post.timestamp | datepipe }}
+            </ion-col>
+              <!-- If reply counter is 0 -->
+              <ion-col *ngIf="post.reply_count == 0" size="4" class="reply" (click)="gotToComments(post.id)">
+                <ion-icon name="chatbubble-outline"></ion-icon>              
+                <div class="text">none</div>
+              </ion-col>
+              <!-- If reply counter is 1 -->
+              <ion-col *ngIf="post.reply_count == 1" size="4" class="reply" (click)="gotToComments(post.id)">
+                <ion-icon name="chatbubble-outline"></ion-icon>              
+                <div class="text">1 reply</div>
+              </ion-col>
+              <!-- If reply counter is greater than 1 -->
+              <ion-col *ngIf="post.reply_count > 1" size="4" class="reply" (click)="gotToComments(post.id)">
+                <ion-icon name="chatbubbles-outline"></ion-icon>              
+                <div class="text">{{post.reply_count}} replies</div>
+              </ion-col>
+            <!-- Distance column -->
+            <ion-col size="4" class="distance">
+              <div class="text"> {{ post.distance }} miles</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-footer>
+    </ion-card>
+  </ion-list>
+
+  
+<!-- <ion-tabs>
+  <ion-tab-bar slot="bottom">
+
+    <ion-tab-button tab="about">
+      <ion-icon name="person-circle-outline"></ion-icon>
+      <ion-label>Me</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="home">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Home</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="more">
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>      
+      <ion-label>More</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs> -->
+  
+</ion-content>
+
