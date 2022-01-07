@@ -1,0 +1,163 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="io.ionic.starter"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="30" />
+9-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml
+10
+11    <!-- Permissions -->
+12
+13    <uses-permission android:name="android.permission.INTERNET" />
+13-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:8:5-67
+13-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:8:22-64
+14    <!-- Camera, Photos, input file -->
+15    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/> -->
+16    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
+17    <!-- Geolocation API -->
+18    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+18-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:13:5-81
+18-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:13:22-78
+19    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+19-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:14:5-79
+19-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:14:22-76
+20
+21    <uses-feature android:name="android.hardware.location.gps" />
+21-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:15:5-66
+21-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:15:19-63
+22    <!-- Network API -->
+23    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+23-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:17:5-79
+23-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:17:22-76
+24    <uses-permission android:name="android.permission.BLUETOOTH" /> <!-- Navigator.getUserMedia -->
+24-->[:capacitor-cordova-android-plugins] C:\Users\lucas.dasilva\Documents\withinReachApp\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:5-68
+24-->[:capacitor-cordova-android-plugins] C:\Users\lucas.dasilva\Documents\withinReachApp\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\debug\AndroidManifest.xml:10:22-65
+25    <!-- Video -->
+26    <!-- <uses-permission android:name="android.permission.CAMERA" /> -->
+27    <!-- Audio -->
+28    <!-- <uses-permission android:name="android.permission.RECORD_AUDIO" /> -->
+29    <!-- <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/> -->
+30    <application
+30-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:25:5-66:19
+31        android:allowBackup="true"
+31-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:27:9-35
+32        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+32-->[androidx.core:core:1.7.0-alpha01] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\0b5777d1174d9025818dd60d6917e22e\core-1.7.0-alpha01\AndroidManifest.xml:24:18-86
+33        android:debuggable="true"
+34        android:icon="@mipmap/ic_launcher"
+34-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:28:9-43
+35        android:label="@string/app_name"
+35-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:29:9-41
+36        android:networkSecurityConfig="@xml/network_security_config"
+36-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:33:9-69
+37        android:roundIcon="@mipmap/ic_launcher_round"
+37-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:30:9-54
+38        android:supportsRtl="true"
+38-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:31:9-35
+39        android:testOnly="true"
+40        android:theme="@style/AppTheme"
+40-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:32:9-40
+41        android:usesCleartextTraffic="true" >
+41-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:26:9-44
+42        <activity
+42-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:36:9-55:20
+43            android:name="io.ionic.starter.MainActivity"
+43-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:38:13-57
+44            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+44-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:37:13-129
+45            android:label="@string/title_activity_main"
+45-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:39:13-56
+46            android:launchMode="singleTask"
+46-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:41:13-44
+47            android:theme="@style/AppTheme.NoActionBarLaunch" >
+47-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:40:13-62
+48            <intent-filter>
+48-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:43:13-46:29
+49                <action android:name="android.intent.action.MAIN" />
+49-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:44:17-69
+49-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:44:25-66
+50
+51                <category android:name="android.intent.category.LAUNCHER" />
+51-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:45:17-77
+51-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:45:27-74
+52            </intent-filter>
+53            <intent-filter>
+53-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:48:13-53:29
+54                <action android:name="android.intent.action.VIEW" />
+54-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:49:17-69
+54-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:49:25-66
+55
+56                <category android:name="android.intent.category.DEFAULT" />
+56-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:50:17-76
+56-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:50:27-73
+57                <category android:name="android.intent.category.BROWSABLE" />
+57-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:51:17-78
+57-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:51:27-75
+58
+59                <data android:scheme="@string/custom_url_scheme" />
+59-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:52:17-68
+59-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:52:23-65
+60            </intent-filter>
+61        </activity>
+62
+63        <provider
+64            android:name="androidx.core.content.FileProvider"
+64-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:58:13-62
+65            android:authorities="io.ionic.starter.fileprovider"
+65-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:59:13-64
+66            android:exported="false"
+66-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:60:13-37
+67            android:grantUriPermissions="true" >
+67-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:61:13-47
+68            <meta-data
+68-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:62:13-64:64
+69                android:name="android.support.FILE_PROVIDER_PATHS"
+69-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:63:17-67
+70                android:resource="@xml/file_paths" />
+70-->C:\Users\lucas.dasilva\Documents\withinReachApp\android\app\src\main\AndroidManifest.xml:64:17-51
+71        </provider>
+72
+73        <activity
+73-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\d4a4edd97917c04697fd2714add0e47c\jetified-play-services-base-17.5.0\AndroidManifest.xml:23:9-26:75
+74            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+74-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\d4a4edd97917c04697fd2714add0e47c\jetified-play-services-base-17.5.0\AndroidManifest.xml:24:13-79
+75            android:exported="false"
+75-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\d4a4edd97917c04697fd2714add0e47c\jetified-play-services-base-17.5.0\AndroidManifest.xml:25:13-37
+76            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+76-->[com.google.android.gms:play-services-base:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\d4a4edd97917c04697fd2714add0e47c\jetified-play-services-base-17.5.0\AndroidManifest.xml:26:13-72
+77
+78        <meta-data
+78-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\f70108d8f952e77c4f6798b2aedc23d5\jetified-play-services-basement-17.5.0\AndroidManifest.xml:23:9-25:69
+79            android:name="com.google.android.gms.version"
+79-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\f70108d8f952e77c4f6798b2aedc23d5\jetified-play-services-basement-17.5.0\AndroidManifest.xml:24:13-58
+80            android:value="@integer/google_play_services_version" />
+80-->[com.google.android.gms:play-services-basement:17.5.0] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\f70108d8f952e77c4f6798b2aedc23d5\jetified-play-services-basement-17.5.0\AndroidManifest.xml:25:13-66
+81
+82        <provider
+82-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:26:9-34:20
+83            android:name="androidx.startup.InitializationProvider"
+83-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:27:13-67
+84            android:authorities="io.ionic.starter.androidx-startup"
+84-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:28:13-68
+85            android:exported="false" >
+85-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:29:13-37
+86            <meta-data
+86-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:31:13-33:52
+87                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+87-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:32:17-75
+88                android:value="androidx.startup" />
+88-->[androidx.emoji2:emoji2:1.0.0-alpha03] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\443888f44b07b6112bcd7306b90babff\jetified-emoji2-1.0.0-alpha03\AndroidManifest.xml:33:17-49
+89            <meta-data
+89-->[androidx.lifecycle:lifecycle-process:2.4.0-alpha02] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\c0c71f2d10d07dfb4a3dee7da82a682c\jetified-lifecycle-process-2.4.0-alpha02\AndroidManifest.xml:31:13-33:52
+90                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+90-->[androidx.lifecycle:lifecycle-process:2.4.0-alpha02] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\c0c71f2d10d07dfb4a3dee7da82a682c\jetified-lifecycle-process-2.4.0-alpha02\AndroidManifest.xml:32:17-78
+91                android:value="androidx.startup" />
+91-->[androidx.lifecycle:lifecycle-process:2.4.0-alpha02] C:\Users\lucas.dasilva\.gradle\caches\transforms-2\files-2.1\c0c71f2d10d07dfb4a3dee7da82a682c\jetified-lifecycle-process-2.4.0-alpha02\AndroidManifest.xml:33:17-49
+92        </provider>
+93    </application>
+94
+95</manifest>

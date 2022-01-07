@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/android.iml" filepath="$PROJECT_DIR$/.idea/modules/android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-475531161/android.capacitor-android.iml" filepath="$PROJECT_DIR$/.idea/modules/-475531161/android.capacitor-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/capacitor-cordova-android-plugins/android.capacitor-cordova-android-plugins.iml" filepath="$PROJECT_DIR$/.idea/modules/capacitor-cordova-android-plugins/android.capacitor-cordova-android-plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1983639663/android.capacitor-device.iml" filepath="$PROJECT_DIR$/.idea/modules/-1983639663/android.capacitor-device.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1322755989/android.capacitor-geolocation.iml" filepath="$PROJECT_DIR$/.idea/modules/-1322755989/android.capacitor-geolocation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-115407085/android.capacitor-network.iml" filepath="$PROJECT_DIR$/.idea/modules/-115407085/android.capacitor-network.iml" />
+    </modules>
+  </component>
+</project>

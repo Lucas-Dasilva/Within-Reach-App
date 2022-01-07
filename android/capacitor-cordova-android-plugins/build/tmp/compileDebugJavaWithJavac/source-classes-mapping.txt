@@ -1,0 +1,23 @@
+cordova/plugins/Diagnostic_Camera.java
+ cordova.plugins.Diagnostic_Camera
+cordova/plugins/Diagnostic_Notifications.java
+ cordova.plugins.Diagnostic_Notifications
+cordova/plugins/Diagnostic_NFC.java
+ cordova.plugins.Diagnostic_NFC
+ cordova.plugins.Diagnostic_NFC$1
+capacitor/android/plugins/BuildConfig.java
+ capacitor.android.plugins.BuildConfig
+cordova/plugins/Diagnostic_Location.java
+ cordova.plugins.Diagnostic_Location
+ cordova.plugins.Diagnostic_Location$1
+cordova/plugins/Diagnostic.java
+ cordova.plugins.Diagnostic
+ cordova.plugins.Diagnostic$1
+ cordova.plugins.Diagnostic$2
+cordova/plugins/Diagnostic_Bluetooth.java
+ cordova.plugins.Diagnostic_Bluetooth
+ cordova.plugins.Diagnostic_Bluetooth$1
+cordova/plugins/Diagnostic_Wifi.java
+ cordova.plugins.Diagnostic_Wifi
+cordova/plugins/Diagnostic_External_Storage.java
+ cordova.plugins.Diagnostic_External_Storage
